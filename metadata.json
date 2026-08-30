@@ -1,0 +1,6 @@
+{
+  "name": "GOMES STUDIO - Briefing",
+  "description": "GOMES STUDIO - Design que conecta, soluções que impulsionam. Formulário interativo mobile-first de briefing de desenvolvimento web com envio integrado para WhatsApp e geração de PDF.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
