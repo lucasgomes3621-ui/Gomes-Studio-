@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { BriefingData, UploadedMediaItem } from '../types';
 import { SectionItem } from './SectionItem';
 import { uploadMediaItem } from '../utils/uploader';
+import { WHATSAPP_DISPLAY_NUMBER } from '../utils/briefingDefaults';
 import {
   Building2,
   Palette,
@@ -33,6 +34,7 @@ import {
   Loader2,
   Check,
   Mail,
+  MessageSquare,
 } from 'lucide-react';
 
 interface FormSectionsProps {
@@ -190,6 +192,44 @@ export const FormSections: React.FC<FormSectionsProps> = ({
     }));
   };
 
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      if (event.target?.result) {
+        const fileDataUrl = event.target.result as string;
+        onChange((prev) => ({
+          ...prev,
+          identidadeVisual: {
+            ...prev.identidadeVisual,
+            logoNome: file.name,
+            logoUrl: fileDataUrl,
+            logoBase64: fileDataUrl,
+            logoSize: file.size,
+          },
+        }));
+
+        try {
+          const res = await uploadMediaItem(file.name, fileDataUrl, file.type);
+          if (res.success && res.fullUrl) {
+            onChange((prev) => ({
+              ...prev,
+              identidadeVisual: {
+                ...prev.identidadeVisual,
+                logoCloudUrl: res.fullUrl,
+              },
+            }));
+          }
+        } catch (err) {
+          console.warn('Logo upload server:', err);
+        }
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleRemoveLogo = () => {
     setLogoPreviewError(false);
     onChange((prev) => ({
@@ -199,6 +239,7 @@ export const FormSections: React.FC<FormSectionsProps> = ({
         logoNome: '',
         logoUrl: '',
         logoBase64: '',
+        logoCloudUrl: '',
         logoSize: undefined,
       },
     }));
@@ -306,32 +347,97 @@ export const FormSections: React.FC<FormSectionsProps> = ({
           onNext={() => onGoToSection(3)}
           isCompleted={Boolean(data.identidadeVisual.logoUrl || data.identidadeVisual.logoNome || data.identidadeVisual.coresPrincipais || data.identidadeVisual.estiloSite.length > 0)}
         >
-          {/* Logo / Anexo por Email */}
-          <div className="space-y-3 bg-[#0b1326] p-4 rounded-xl border border-sky-500/40">
-            <div className="flex items-start gap-3 text-xs text-sky-200">
-              <Mail className="w-5 h-5 text-sky-400 flex-shrink-0 mt-0.5" />
-              <div className="space-y-2 leading-relaxed">
-                <p className="font-bold text-sky-300 text-sm">
-                  📌 Envio da Logomarca por E-mail (Gmail)
+          {/* Logo / Envio pelo WhatsApp */}
+          <div className="space-y-3 bg-[#0b1326] p-4 rounded-xl border border-emerald-500/40">
+            <div className="flex items-start gap-3 text-xs text-emerald-200">
+              <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 border border-emerald-500/30">
+                <MessageSquare className="w-4 h-4" />
+              </div>
+              <div className="space-y-2 leading-relaxed flex-1">
+                <p className="font-bold text-emerald-300 text-sm">
+                  📌 Envio da Logomarca pelo WhatsApp
                 </p>
                 <p className="text-[#cbd5e1] text-xs">
-                  Para garantir a máxima definição visual e sem perda de qualidade, o arquivo original da sua logo (PNG, JPG, PDF ou vetor) deve ser enviado por <strong>E-mail (Gmail)</strong> para <strong>lucasgomes3621@gmail.com</strong>.
+                  O arquivo da sua logo (PNG, JPG, PDF, SVG ou vetor) pode ser enviado diretamente pelo <strong>WhatsApp</strong> para <strong>Lucas Gomes</strong> ({WHATSAPP_DISPLAY_NUMBER}), ou anexado aqui no formulário.
                 </p>
                 <div className="bg-[#131b2e] p-3 rounded-lg border border-[#222a3d] space-y-1.5 text-[11px] text-[#94a3b8]">
-                  <p className="font-semibold text-white">Como fazer o envio:</p>
+                  <p className="font-semibold text-white">Como fazer o envio no WhatsApp:</p>
                   <p className="flex items-center gap-1.5">
-                    <span className="w-4 h-4 rounded-full bg-sky-500/20 text-sky-400 font-bold flex items-center justify-center text-[10px]">1</span>
-                    No final deste formulário, clique no botão azul <strong>"Enviar as Mídias no E-mail"</strong>.
+                    <span className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-[10px]">1</span>
+                    No final deste formulário, clique no botão verde <strong>"Enviar pelo WhatsApp"</strong>.
                   </p>
                   <p className="flex items-center gap-1.5">
-                    <span className="w-4 h-4 rounded-full bg-sky-500/20 text-sky-400 font-bold flex items-center justify-center text-[10px]">2</span>
-                    Seu Gmail abrirá com o destinatário e o texto já preenchidos.
+                    <span className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-[10px]">2</span>
+                    A conversa abrirá automaticamente com o Lucas Gomes com todos os dados preenchidos.
                   </p>
                   <p className="flex items-center gap-1.5">
-                    <span className="w-4 h-4 rounded-full bg-sky-500/20 text-sky-400 font-bold flex items-center justify-center text-[10px]">3</span>
-                    Clique no ícone de <strong>Clips 📎 (Anexar arquivos)</strong> do Gmail e anexe o arquivo da sua logo.
+                    <span className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-[10px]">3</span>
+                    Na conversa, clique no ícone de <strong>Clips 📎 / Anexo (+)</strong> &gt; <strong>Documento</strong> ou <strong>Fotos</strong> e envie o arquivo original da sua logo.
                   </p>
                 </div>
+              </div>
+            </div>
+
+            {/* Opcional: Pré-visualizar ou anexar arquivo da Logo aqui */}
+            <div className="pt-2 border-t border-[#1e293b] space-y-2">
+              <label className="block text-xs font-semibold text-[#94a3b8]">
+                Pré-visualizar ou anexar arquivo da Logo aqui no formulário (Opcional)
+              </label>
+
+              {data.identidadeVisual.logoUrl || data.identidadeVisual.logoBase64 ? (
+                <div className="flex items-center justify-between p-3 bg-[#131b2e] rounded-lg border border-emerald-500/30">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={data.identidadeVisual.logoBase64 || data.identidadeVisual.logoUrl}
+                      alt="Logo preview"
+                      className="w-12 h-12 object-contain rounded bg-[#0b1326] p-1 border border-[#2d3449]"
+                      onError={() => setLogoPreviewError(true)}
+                    />
+                    <div>
+                      <p className="text-xs font-semibold text-white truncate max-w-[200px]">
+                        {data.identidadeVisual.logoNome || 'Logomarca Anexada'}
+                      </p>
+                      <p className="text-[10px] text-emerald-400">✓ Pronta para inclusão no projeto</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleRemoveLogo}
+                    className="p-1.5 rounded-lg bg-red-950/30 hover:bg-red-900/40 text-red-400 border border-red-500/30 transition text-xs flex items-center gap-1"
+                    title="Remover arquivo"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span className="text-[10px]">Remover</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <input
+                    ref={logoInputRef}
+                    type="file"
+                    accept="image/*,.pdf,.svg,.eps,.ai"
+                    onChange={handleLogoUpload}
+                    className="hidden"
+                    id="logo-upload-input"
+                  />
+                  <label
+                    htmlFor="logo-upload-input"
+                    className="flex-1 flex items-center justify-center gap-2 p-2.5 rounded-lg bg-[#131b2e] hover:bg-[#1a233a] border border-dashed border-emerald-500/40 text-emerald-300 text-xs font-medium cursor-pointer transition active:scale-95"
+                  >
+                    <Upload className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Selecionar arquivo da Logo no dispositivo</span>
+                  </label>
+                </div>
+              )}
+
+              <div>
+                <input
+                  type="url"
+                  value={data.identidadeVisual.logoCloudUrl || ''}
+                  onChange={(e) => updateField('identidadeVisual', 'logoCloudUrl', e.target.value)}
+                  placeholder="Ou cole o link da logo no Google Drive / Nuvem (se preferir)"
+                  className="w-full bg-[#131b2e] border border-[#222a3d] focus:border-emerald-500 rounded-lg px-3 py-2 text-xs text-[#f8fafc] placeholder-[#4b5563] outline-none transition"
+                />
               </div>
             </div>
           </div>
@@ -426,45 +532,43 @@ export const FormSections: React.FC<FormSectionsProps> = ({
             data.midia.arquivosInfo
           )}
         >
-          {/* Instruções de Envio de Fotos no Email */}
-          <div className="bg-[#0b1326] border border-sky-500/40 rounded-xl p-4 space-y-3">
-            <div className="flex items-start gap-3 text-xs text-sky-200">
-              <Mail className="w-5 h-5 text-sky-400 flex-shrink-0 mt-0.5" />
-              <div className="space-y-2 leading-relaxed">
-                <p className="font-bold text-sky-300 text-sm">
-                  📌 Envio de Fotos, Vídeos e Imagens por E-mail (Gmail)
+          {/* Instruções de Envio de Fotos no WhatsApp */}
+          <div className="bg-[#0b1326] border border-emerald-500/40 rounded-xl p-4 space-y-3">
+            <div className="flex items-start gap-3 text-xs text-emerald-200">
+              <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 border border-emerald-500/30">
+                <MessageSquare className="w-4 h-4" />
+              </div>
+              <div className="space-y-2 leading-relaxed flex-1">
+                <p className="font-bold text-emerald-300 text-sm">
+                  📌 Envio de Fotos e Vídeos pelo WhatsApp
                 </p>
                 <p className="text-[#cbd5e1] text-xs">
-                  Para que as fotos do seu estabelecimento, produtos, equipe e serviços não percam qualidade nem sofram compressão, o envio das mídias é feito diretamente pelo <strong>Gmail</strong> para <strong>lucasgomes3621@gmail.com</strong>.
+                  Para que as fotos do seu estabelecimento, produtos, equipe e serviços mantenham alta resolução, o envio pode ser feito diretamente pelo <strong>WhatsApp</strong> para <strong>Lucas Gomes</strong> ({WHATSAPP_DISPLAY_NUMBER}), ou através de um link de pasta compartilhada na nuvem.
                 </p>
               </div>
             </div>
 
             {/* Passo a Passo Ilustrado */}
-            <div className="bg-[#131b2e] p-3.5 rounded-xl border border-[#222a3d] space-y-2.5 text-xs text-[#94a3b8]">
+            <div className="bg-[#131b2e] p-3.5 rounded-xl border border-[#222a3d] space-y-2 text-xs text-[#94a3b8]">
               <p className="font-bold text-white flex items-center gap-1.5 text-xs">
-                <span>📋 Como anexar suas mídias no Gmail:</span>
+                <span>📋 Como enviar suas fotos e vídeos no WhatsApp:</span>
               </p>
-              <div className="space-y-2 text-[11px]">
+              <div className="space-y-1.5 text-[11px]">
                 <div className="flex items-start gap-2">
-                  <span className="w-4 h-4 rounded-full bg-sky-500/20 text-sky-400 font-bold flex items-center justify-center text-[10px] flex-shrink-0 mt-0.5">1</span>
+                  <span className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-[10px] flex-shrink-0 mt-0.5">1</span>
                   <span>Preencha as informações do briefing e vá até o final da página.</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <span className="w-4 h-4 rounded-full bg-sky-500/20 text-sky-400 font-bold flex items-center justify-center text-[10px] flex-shrink-0 mt-0.5">2</span>
-                  <span>Clique no botão azul <strong>"Enviar as Mídias no E-mail"</strong> localizado no final do formulário.</span>
+                  <span className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-[10px] flex-shrink-0 mt-0.5">2</span>
+                  <span>Clique no botão verde <strong>"Enviar pelo WhatsApp"</strong>.</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <span className="w-4 h-4 rounded-full bg-sky-500/20 text-sky-400 font-bold flex items-center justify-center text-[10px] flex-shrink-0 mt-0.5">3</span>
-                  <span>O seu aplicativo ou site do <strong>Gmail</strong> abrirá automaticamente com o destinatário <strong>lucasgomes3621@gmail.com</strong> e o resumo do site já preenchido.</span>
+                  <span className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-[10px] flex-shrink-0 mt-0.5">3</span>
+                  <span>O WhatsApp abrirá com o Lucas Gomes com todos os dados do site já organizados.</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <span className="w-4 h-4 rounded-full bg-sky-500/20 text-sky-400 font-bold flex items-center justify-center text-[10px] flex-shrink-0 mt-0.5">4</span>
-                  <span>No Gmail, clique no ícone do <strong>Clips 📎 ("Anexar arquivos")</strong> no topo ou rodapé do e-mail.</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="w-4 h-4 rounded-full bg-sky-500/20 text-sky-400 font-bold flex items-center justify-center text-[10px] flex-shrink-0 mt-0.5">5</span>
-                  <span>Selecione as fotos, vídeos e o arquivo da sua logo, e clique em <strong>Enviar</strong>!</span>
+                  <span className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-[10px] flex-shrink-0 mt-0.5">4</span>
+                  <span>Na conversa, clique no ícone de <strong>Clips 📎 (Anexo)</strong> &gt; <strong>Documento</strong> (para qualidade original sem compressão) ou <strong>Fotos/Vídeos</strong>, e envie!</span>
                 </div>
               </div>
             </div>

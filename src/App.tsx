@@ -192,7 +192,7 @@ export default function App() {
             Preencha as informações do seu site para iniciarmos o projeto.
           </p>
           <p>
-            Ao concluir, as informações escritas vão para o <strong>WhatsApp</strong>, e as fotos, vídeos e a logo em alta qualidade vão por <strong>E-mail (Gmail)</strong> para <strong>lucasgomes3621@gmail.com</strong>.
+            Ao concluir, todas as informações e o documento oficial do seu site são enviados diretamente pelo <strong>WhatsApp</strong> para <strong>Lucas Gomes</strong> ({WHATSAPP_DISPLAY_NUMBER}). Você também poderá enviar sua logomarca e fotos na conversa.
           </p>
         </div>
 
@@ -207,52 +207,43 @@ export default function App() {
         />
 
         {/* Action card before footer */}
-        <div className="mt-6 p-4.5 bg-gradient-to-br from-[#131b2e] to-[#171f33] border border-blue-500/30 rounded-2xl text-center space-y-3.5 shadow-xl">
-          <div className="w-11 h-11 mx-auto rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center border border-blue-500/40">
-            <Send className="w-5 h-5 ml-0.5" />
+        <div className="mt-6 p-5 bg-gradient-to-br from-[#131b2e] to-[#101b2b] border border-emerald-500/40 rounded-2xl text-center space-y-4 shadow-xl">
+          <div className="w-12 h-12 mx-auto rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/40 shadow-inner">
+            <MessageSquare className="w-6 h-6" />
           </div>
           <div>
             <h3 className="text-base font-bold text-white">Finalização & Envio do Projeto</h3>
-            <p className="text-xs text-[#94a3b8] mt-1 max-w-md mx-auto leading-relaxed">
-              <strong>WhatsApp:</strong> Envia todas as informações escritas e estrutura do site.<br />
-              <strong>E-mail (Gmail):</strong> Envia os arquivos de fotos, vídeos e a logo em alta qualidade para <strong>lucasgomes3621@gmail.com</strong>.
+            <p className="text-xs text-[#94a3b8] mt-1.5 max-w-md mx-auto leading-relaxed">
+              Ao clicar no botão abaixo, todas as respostas do seu briefing e o documento oficial do projeto são enviados diretamente pelo <strong>WhatsApp</strong> para <strong>Lucas Gomes</strong> ({WHATSAPP_DISPLAY_NUMBER}).
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-2.5 pt-1 justify-center max-w-lg mx-auto">
-            <button
-              type="button"
-              onClick={handleDownloadPDF}
-              className="flex-1 py-3 px-3.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-bold border border-amber-500/40 transition active:scale-95 flex items-center justify-center gap-2"
-            >
-              <FileDown className="w-4 h-4" />
-              <span>Baixar PDF</span>
-            </button>
-            <button
-              type="button"
-              onClick={handleOpenEmailForMedia}
-              className="flex-1 py-3 px-3.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold transition active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-sky-500/20"
-            >
-              <Mail className="w-4 h-4 text-white" />
-              <span>Enviar as Mídias no E-mail</span>
-            </button>
+          <div className="flex flex-col sm:flex-row gap-3 pt-1 justify-center max-w-lg mx-auto">
             <button
               type="button"
               onClick={handleDirectWhatsAppSend}
               disabled={isSendingWhatsApp}
-              className="flex-1 py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-75 text-white text-xs font-bold transition active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
+              className="flex-1 py-3.5 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-75 text-white text-sm font-bold transition active:scale-95 flex items-center justify-center gap-2.5 shadow-lg shadow-emerald-600/25 border border-emerald-400/30 cursor-pointer"
             >
               {isSendingWhatsApp ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin text-white" />
-                  <span>Anexando PDF e abrindo...</span>
+                  <span>Preparando envio no WhatsApp...</span>
                 </>
               ) : (
                 <>
                   <Send className="w-4 h-4" />
-                  <span>Enviar no WhatsApp</span>
+                  <span>Enviar pelo WhatsApp</span>
                 </>
               )}
+            </button>
+            <button
+              type="button"
+              onClick={handleDownloadPDF}
+              className="py-3 px-4 rounded-xl bg-[#171f33] hover:bg-[#222a3d] text-amber-300 text-xs font-bold border border-amber-500/30 transition active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <FileDown className="w-4 h-4 text-amber-400" />
+              <span>Baixar Cópia em PDF</span>
             </button>
           </div>
         </div>

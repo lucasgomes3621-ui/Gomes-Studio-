@@ -310,7 +310,7 @@ export function formatWhatsAppMessage(data: BriefingData, pdfDirectUrl?: string)
   // Checklist
   lines.push('✅ *Checklist Final*');
   lines.push(`• Dados confirmados: ${data.checklist.confirmou ? 'Sim' : 'Não'}`);
-  lines.push(`• Mídias/Logo no Gmail: ${data.checklist.anexouArquivos ? 'Sim' : 'Sim'}`);
+  lines.push(`• Mídias/Logo: ${data.checklist.anexouArquivos ? 'Anexadas / Prontas para envio' : 'Enviar na conversa do WhatsApp'}`);
   lines.push('');
 
   // Attached PDF link if generated

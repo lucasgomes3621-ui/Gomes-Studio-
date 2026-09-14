@@ -1,4 +1,17 @@
 import React, { ReactNode } from 'react';
+import {
+  AlertTriangle,
+  RefreshCw,
+  RotateCcw,
+  Copy,
+  Check,
+  ChevronDown,
+  ChevronUp,
+  Terminal,
+  MessageSquare,
+  Trash2,
+} from 'lucide-react';
+import { WHATSAPP_TARGET_NUMBER, WHATSAPP_DISPLAY_NUMBER, WHATSAPP_CONTACT_NAME } from '../utils/briefingDefaults';
 
 interface Props {
   children: ReactNode;
@@ -7,54 +20,244 @@ interface Props {
 interface State {
   hasError: boolean;
   error: Error | null;
+  errorInfo: React.ErrorInfo | null;
+  showDetails: boolean;
+  copied: boolean;
 }
 
 export class ErrorBoundary extends React.Component<Props, State> {
   override state: State = {
     hasError: false,
     error: null,
+    errorInfo: null,
+    showDetails: false,
+    copied: false,
   };
 
-  public static getDerivedStateFromError(error: Error): State {
+  public static getDerivedStateFromError(error: Error): Partial<State> {
     return { hasError: true, error };
   }
 
   override componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Uncaught error:', error, errorInfo);
+    console.error('[Gomes Studio ErrorBoundary] Capturado erro de renderização:', error, errorInfo);
+    this.setState({ errorInfo });
   }
+
+  handleReset = () => {
+    this.setState({
+      hasError: false,
+      error: null,
+      errorInfo: null,
+      showDetails: false,
+      copied: false,
+    });
+  };
+
+  handleReload = () => {
+    try {
+      window.location.reload();
+    } catch {
+      window.location.href = window.location.href;
+    }
+  };
+
+  handleClearCacheAndReload = () => {
+    try {
+      localStorage.removeItem('gomes_studio_briefing_draft');
+      localStorage.removeItem('gomes_studio_briefing_autosave');
+      sessionStorage.clear();
+    } catch (e) {
+      console.warn('Erro ao limpar cache local:', e);
+    }
+    this.handleReload();
+  };
+
+  handleCopyError = async () => {
+    try {
+      const { error, errorInfo } = this.state;
+      const report = [
+        '--- RELATÓRIO DE ERRO GOMES STUDIO ---',
+        `Data/Hora: ${new Date().toLocaleString('pt-BR')}`,
+        `URL: ${window.location.href}`,
+        `Navegador: ${navigator.userAgent}`,
+        `Erro: ${error?.name || 'Error'}: ${error?.message || 'Sem mensagem'}`,
+        '',
+        'Stack Trace:',
+        error?.stack || 'Não disponível',
+        '',
+        'Component Stack:',
+        errorInfo?.componentStack || 'Não disponível',
+        '---------------------------------------',
+      ].join('\n');
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(report);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = report;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
+
+      this.setState({ copied: true });
+      setTimeout(() => {
+        this.setState({ copied: false });
+      }, 2500);
+    } catch (err) {
+      console.warn('Falha ao copiar:', err);
+    }
+  };
+
+  handleSendToWhatsApp = () => {
+    try {
+      const { error } = this.state;
+      const shortMsg = encodeURIComponent(
+        `Olá ${WHATSAPP_CONTACT_NAME}, ocorreu uma falha na tela do briefing do site:\n\n*Erro:* ${error?.name || 'Erro'}: ${error?.message || 'Falha ao renderizar'}\n*URL:* ${window.location.href}`
+      );
+      window.open(`https://wa.me/${WHATSAPP_TARGET_NUMBER}?text=${shortMsg}`, '_blank');
+    } catch (e) {
+      console.warn('Falha ao abrir WhatsApp:', e);
+    }
+  };
+
+  toggleDetails = () => {
+    this.setState((prev) => ({ showDetails: !prev.showDetails }));
+  };
 
   override render() {
     if (this.state.hasError) {
+      const { error, errorInfo, showDetails, copied } = this.state;
+
       return (
-        <div className="min-h-screen bg-[#070d1a] text-white flex items-center justify-center p-6">
-          <div className="max-w-md w-full bg-[#0f172a] border border-red-500/30 rounded-2xl p-6 shadow-2xl text-center space-y-4">
-            <div className="w-12 h-12 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center mx-auto text-xl font-bold">
-              !
+        <div className="min-h-screen bg-[#070d1a] text-slate-100 flex items-center justify-center p-4 sm:p-6 font-sans">
+          <div className="max-w-xl w-full bg-[#0d1527] border border-red-500/30 rounded-2xl p-5 sm:p-7 shadow-2xl shadow-black/80 space-y-5">
+            {/* Cabeçalho do Erro */}
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left">
+              <div className="w-12 h-12 rounded-2xl bg-red-500/15 border border-red-500/30 text-red-400 flex items-center justify-center flex-shrink-0 shadow-lg shadow-red-950/40">
+                <AlertTriangle className="w-6 h-6 animate-pulse" />
+              </div>
+              <div className="space-y-1">
+                <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                  Ops! Ocorreu uma instabilidade inesperada
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                  O sistema evitou uma tela em branco para proteger a sua navegação. Seus dados preenchidos no formulário continuam salvos com segurança no dispositivo.
+                </p>
+              </div>
             </div>
-            <h2 className="text-xl font-bold text-slate-100">Ops! Ocorreu um erro ao carregar</h2>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Não se preocupe, seus dados preenchidos estão seguros no navegador.
-            </p>
-            <div className="pt-2 flex flex-col gap-2">
+
+            {/* Resumo do Erro para Leitura Rápida */}
+            {error?.message && (
+              <div className="bg-[#080d19] border border-[#1e293b] rounded-xl p-3 text-left">
+                <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                  <Terminal className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Mensagem do Erro</span>
+                </p>
+                <p className="text-xs text-red-300 font-mono break-words bg-red-950/20 p-2 rounded-lg border border-red-900/30">
+                  {error.name ? `${error.name}: ` : ''}{error.message}
+                </p>
+              </div>
+            )}
+
+            {/* Botões de Ação Imediata */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
               <button
-                onClick={() => window.location.reload()}
-                className="w-full py-2.5 px-4 bg-sky-500 hover:bg-sky-400 text-white text-sm font-semibold rounded-xl transition-all"
+                type="button"
+                onClick={this.handleReset}
+                className="py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-semibold rounded-xl transition active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/40 border border-emerald-400/30 cursor-pointer"
               >
-                Recarregar Página
+                <RotateCcw className="w-4 h-4" />
+                <span>Tentar Recuperar Tela</span>
               </button>
+
               <button
-                onClick={() => {
-                  try {
-                    localStorage.clear();
-                    window.location.reload();
-                  } catch (e) {
-                    window.location.reload();
-                  }
-                }}
-                className="w-full py-2 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium rounded-xl transition-all"
+                type="button"
+                onClick={this.handleReload}
+                className="py-2.5 px-4 bg-sky-600 hover:bg-sky-500 text-white text-xs sm:text-sm font-semibold rounded-xl transition active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-sky-950/40 border border-sky-400/30 cursor-pointer"
               >
-                Limpar Cache e Recarregar
+                <RefreshCw className="w-4 h-4" />
+                <span>Recarregar Página</span>
               </button>
+            </div>
+
+            {/* Opções Secundárias / Limpeza de Cache */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-2 border-t border-[#1a233a] text-xs">
+              <button
+                type="button"
+                onClick={this.handleClearCacheAndReload}
+                className="w-full sm:w-auto px-3 py-1.5 text-slate-400 hover:text-amber-300 bg-[#131b2e] hover:bg-[#1a233a] border border-[#222a3d] rounded-lg transition flex items-center justify-center gap-1.5 cursor-pointer text-[11px]"
+                title="Limpar apenas os rascunhos temporários caso algum campo tenha causado inconsistência"
+              >
+                <Trash2 className="w-3.5 h-3.5 text-amber-400" />
+                <span>Limpar Rascunho Salvo & Reiniciar</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={this.handleSendToWhatsApp}
+                className="w-full sm:w-auto px-3 py-1.5 text-emerald-400 hover:text-emerald-300 bg-[#0e1d1a] hover:bg-[#122823] border border-emerald-500/30 rounded-lg transition flex items-center justify-center gap-1.5 cursor-pointer text-[11px]"
+              >
+                <MessageSquare className="w-3.5 h-3.5" />
+                <span>Avisar Suporte ({WHATSAPP_DISPLAY_NUMBER})</span>
+              </button>
+            </div>
+
+            {/* Detalhes Técnicos Dobráveis para Depuração */}
+            <div className="border border-[#1e293b] rounded-xl overflow-hidden bg-[#080d19]">
+              <button
+                type="button"
+                onClick={this.toggleDetails}
+                className="w-full px-3.5 py-2.5 flex items-center justify-between text-xs text-slate-300 hover:bg-[#101728] transition cursor-pointer"
+              >
+                <span className="flex items-center gap-2 font-medium">
+                  <Terminal className="w-3.5 h-3.5 text-sky-400" />
+                  <span>Detalhes Técnicos para Depuração</span>
+                </span>
+                <span className="text-slate-500 flex items-center gap-1 text-[11px]">
+                  {showDetails ? (
+                    <>
+                      <span>Recolher</span>
+                      <ChevronUp className="w-3.5 h-3.5" />
+                    </>
+                  ) : (
+                    <>
+                      <span>Expandir</span>
+                      <ChevronDown className="w-3.5 h-3.5" />
+                    </>
+                  )}
+                </span>
+              </button>
+
+              {showDetails && (
+                <div className="p-3.5 border-t border-[#1e293b] space-y-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[11px] text-slate-400">Pilha de Execução (Stack):</span>
+                    <button
+                      type="button"
+                      onClick={this.handleCopyError}
+                      className="px-2.5 py-1 text-[11px] font-medium rounded-md bg-[#131b2e] hover:bg-[#1e293b] text-slate-200 border border-[#2d3748] transition flex items-center gap-1.5 cursor-pointer"
+                    >
+                      {copied ? (
+                        <>
+                          <Check className="w-3 h-3 text-emerald-400" />
+                          <span className="text-emerald-400 font-semibold">Copiado!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3 h-3 text-slate-400" />
+                          <span>Copiar Log Completo</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  <div className="max-h-48 overflow-y-auto font-mono text-[10px] text-slate-400 bg-black/60 p-2.5 rounded-lg border border-[#1e293b] leading-relaxed select-all">
+                    {error?.stack || errorInfo?.componentStack || 'Nenhum rastreamento de pilha disponível.'}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -64,3 +267,4 @@ export class ErrorBoundary extends React.Component<Props, State> {
     return this.props.children;
   }
 }
+
