@@ -28,43 +28,43 @@ export const SectionItem: React.FC<SectionItemProps> = ({
   return (
     <div
       id={`section-${id}`}
-      className={`rounded-xl border transition-all duration-200 overflow-hidden mb-3 ${
+      className={`rounded-2xl border transition-all duration-200 overflow-hidden mb-3.5 backdrop-blur-md ${
         isOpen
-          ? 'bg-[#131b2e] border-blue-600/80 shadow-[0_4px_24px_rgba(0,0,0,0.35)]'
-          : 'bg-[#131b2e]/90 border-[#222a3d] hover:border-[#334155]'
+          ? 'bg-[#090D14]/95 border-[#0066FF]/80 shadow-[0_8px_32px_rgba(0,102,255,0.2)]'
+          : 'bg-[#090D14]/80 border-white/[0.08] hover:border-white/20'
       }`}
     >
       {/* Accordion Header */}
       <button
         type="button"
         onClick={onToggle}
-        className="w-full px-4 py-3.5 flex items-center justify-between text-left bg-[#171f33]/70 hover:bg-[#171f33] transition-colors"
+        className="w-full px-4 py-3.5 flex items-center justify-between text-left bg-[#0D121C]/80 hover:bg-[#121824] transition-colors cursor-pointer"
       >
         <div className="flex items-center gap-2.5 min-w-0">
           <div
             className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-semibold flex-shrink-0 transition-colors ${
               isOpen
-                ? 'bg-blue-600/20 text-blue-400 border border-blue-500/40'
+                ? 'bg-[#0066FF]/20 text-[#38BDF8] border border-[#0066FF]/40'
                 : isCompleted
-                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                : 'bg-[#222a3d] text-[#94a3b8]'
+                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+                : 'bg-white/[0.06] text-[#94A3B8] border border-white/[0.05]'
             }`}
           >
             {icon}
           </div>
-          <span className="text-sm font-semibold text-[#f8fafc] truncate tracking-tight">
+          <span className="text-sm font-bold text-white truncate tracking-tight">
             {title}
           </span>
         </div>
 
         <div className="flex items-center gap-2 flex-shrink-0 ml-2">
           {isCompleted && !isOpen && (
-            <span className="w-2 h-2 rounded-full bg-emerald-400 ring-2 ring-emerald-900/50" />
+            <span className="w-2 h-2 rounded-full bg-emerald-400 ring-2 ring-emerald-500/30" />
           )}
           <motion.div
             animate={{ rotate: isOpen ? 180 : 0 }}
             transition={{ duration: 0.2 }}
-            className="text-[#94a3b8]"
+            className="text-[#94A3B8]"
           >
             <ChevronDown className="w-4 h-4" />
           </motion.div>
@@ -80,16 +80,16 @@ export const SectionItem: React.FC<SectionItemProps> = ({
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.22, ease: 'easeInOut' }}
           >
-            <div className="p-4 border-t border-[#222a3d] space-y-3.5">
+            <div className="p-4 sm:p-5 border-t border-white/[0.08] space-y-4">
               {children}
 
               {/* Step Navigation Inside Section */}
-              <div className="pt-3 border-t border-[#222a3d] flex items-center justify-between gap-2 mt-4">
+              <div className="pt-3.5 border-t border-white/[0.08] flex items-center justify-between gap-2 mt-4">
                 {onPrev ? (
                   <button
                     type="button"
                     onClick={onPrev}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[#171f33] hover:bg-[#222a3d] text-[#94a3b8] hover:text-[#f8fafc] border border-[#2d3449] transition active:scale-95"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-[#0F1420] hover:bg-[#161D2C] text-[#94A3B8] hover:text-white border border-white/10 transition active:scale-95 cursor-pointer font-mono"
                   >
                     <ArrowLeft className="w-3.5 h-3.5" />
                     Anterior
@@ -102,7 +102,7 @@ export const SectionItem: React.FC<SectionItemProps> = ({
                   <button
                     type="button"
                     onClick={onNext}
-                    className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition active:scale-95 shadow-sm shadow-blue-500/20 ml-auto"
+                    className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-semibold bg-[#0066FF] hover:bg-[#0052CC] text-white transition active:scale-95 shadow-[0_0_16px_rgba(0,102,255,0.4)] ml-auto cursor-pointer font-mono"
                   >
                     Próximo
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -116,3 +116,4 @@ export const SectionItem: React.FC<SectionItemProps> = ({
     </div>
   );
 };
+

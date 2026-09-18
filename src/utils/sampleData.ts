@@ -1,6 +1,7 @@
 import { BriefingData } from '../types';
 
 export const sampleBriefingData: BriefingData = {
+  tipoProjeto: 'Landing page profissional',
   empresa: {
     nome: 'Nexus Inovação Digital',
     segmento: 'Consultoria e Soluções Tecnológicas',

@@ -7,8 +7,6 @@ import {
   getDirectWhatsAppUrl,
   getDirectEmailUrls,
   WHATSAPP_TARGET_NUMBER,
-  WHATSAPP_DISPLAY_NUMBER,
-  WHATSAPP_CONTACT_NAME,
 } from '../utils/briefingDefaults';
 import { getBriefingPDFBase64 } from '../utils/pdfGenerator';
 import { sendBriefingByEmail, uploadBriefingPDF } from '../utils/uploader';
@@ -106,9 +104,9 @@ export const WhatsAppPreviewModal: React.FC<WhatsAppPreviewModalProps> = ({
                 <MessageSquare className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-sm font-bold">Enviar Briefing para o WhatsApp e E-mail</h3>
+                <h3 className="text-sm font-bold">Enviar Briefing para o WhatsApp</h3>
                 <p className="text-[11px] text-emerald-400 font-medium">
-                  WhatsApp: {WHATSAPP_DISPLAY_NUMBER} • E-mail: lucasgomes3621@gmail.com
+                  Canal Oficial Gomes Studio
                 </p>
               </div>
             </div>
@@ -130,18 +128,13 @@ export const WhatsAppPreviewModal: React.FC<WhatsAppPreviewModalProps> = ({
                     <UserCheck className="w-4 h-4" />
                   </div>
                   <div>
-                    <p className="font-bold text-white text-xs">{WHATSAPP_CONTACT_NAME}</p>
-                    <p className="text-[11px] text-[#94a3b8]">WhatsApp: <span className="text-emerald-400 font-mono font-semibold">{WHATSAPP_DISPLAY_NUMBER}</span></p>
+                    <p className="font-bold text-white text-xs">Gomes Studio</p>
+                    <p className="text-[11px] text-[#94a3b8]">Canal Oficial de Atendimento WhatsApp</p>
                   </div>
                 </div>
                 <span className="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-semibold">
                   Destino Oficial
                 </span>
-              </div>
-
-              <div className="pt-1.5 border-t border-[#1e293b] flex items-center gap-2 text-[11px] text-sky-300">
-                <Mail className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" />
-                <span>Cópia por E-mail com PDF anexado: <strong className="text-white">lucasgomes3621@gmail.com</strong></span>
               </div>
             </div>
 
@@ -177,34 +170,22 @@ export const WhatsAppPreviewModal: React.FC<WhatsAppPreviewModalProps> = ({
 
             {/* Automatic Delivery Details */}
             <div className="space-y-2">
-              <div className="text-[11px] text-sky-300 flex items-start gap-2 p-2.5 bg-sky-500/10 border border-sky-500/30 rounded-lg">
-                <Mail className="w-4 h-4 text-sky-400 flex-shrink-0 mt-0.5" />
-                <span className="text-[#cbd5e1] leading-relaxed">
-                  <strong className="text-sky-300">Envio de Fotos e PDF no Gmail:</strong> As informações escritas serão enviadas para o WhatsApp, e os arquivos originais de fotos, vídeos, logo e o PDF gerado serão enviados diretamente pelo seu aplicativo do <strong>Gmail</strong> para <strong className="text-white">lucasgomes3621@gmail.com</strong>.
+              <div className="text-[11px] text-[#38BDF8] flex items-start gap-2 p-2.5 bg-[#0066FF]/10 border border-[#0066FF]/30 rounded-lg">
+                <MessageSquare className="w-4 h-4 text-[#38BDF8] flex-shrink-0 mt-0.5" />
+                <span className="text-[#CBD5E1] leading-relaxed">
+                  <strong className="text-[#38BDF8]">Envio Oficial via WhatsApp:</strong> Ao clicar no botão abaixo, sua mensagem formatada será aberta no WhatsApp oficial da <strong>Gomes Studio</strong> para darmos início ao desenvolvimento do seu site.
                 </span>
               </div>
             </div>
           </div>
 
           {/* Footer Actions */}
-          <div className="p-4 border-t border-[#222a3d] bg-[#171f33] flex flex-col sm:flex-row gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                const { gmailWebUrl, mailtoUrl } = getDirectEmailUrls(data, 'lucasgomes3621@gmail.com');
-                window.open(gmailWebUrl || mailtoUrl, '_blank');
-              }}
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs transition active:scale-95 shadow-md shadow-sky-500/20"
-            >
-              <Mail className="w-4 h-4" />
-              <span>Enviar Mídias no Gmail</span>
-            </button>
-
+          <div className="p-4 border-t border-[#222a3d] bg-[#171f33] flex gap-2">
             <button
               type="button"
               onClick={handleSendAll}
               disabled={isSending}
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-75 text-white font-bold text-xs transition active:scale-95 shadow-md shadow-emerald-500/20"
+              className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-75 text-white font-bold text-xs sm:text-sm transition active:scale-95 shadow-md shadow-emerald-500/20 cursor-pointer"
             >
               {isSending ? (
                 <>
@@ -214,7 +195,7 @@ export const WhatsAppPreviewModal: React.FC<WhatsAppPreviewModalProps> = ({
               ) : (
                 <>
                   <Send className="w-4 h-4" />
-                  <span>Enviar no WhatsApp</span>
+                  <span>Confirmar & Abrir WhatsApp</span>
                 </>
               )}
             </button>

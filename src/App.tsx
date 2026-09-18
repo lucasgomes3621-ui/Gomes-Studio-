@@ -9,8 +9,6 @@ import {
   initialBriefingData,
   calculateProgress,
   WHATSAPP_TARGET_NUMBER,
-  WHATSAPP_DISPLAY_NUMBER,
-  WHATSAPP_CONTACT_NAME,
   getDirectWhatsAppUrl,
   getDirectEmailUrls,
   formatWhatsAppMessage,
@@ -22,16 +20,39 @@ import { Header } from './components/Header';
 import { FormSections } from './components/FormSections';
 import { WhatsAppPreviewModal } from './components/WhatsAppPreviewModal';
 import { GomesStudioFooterBanner } from './components/GomesStudioBrand';
+import { sanitizeSelectionsForPlan } from './utils/projectTypeConfig';
 import { Send, CheckCircle2, MessageSquare, FileDown, Trash2, AlertTriangle, X, Mail, Loader2 } from 'lucide-react';
 
 const STORAGE_KEY = 'briefing_profissional_data_v1';
+
+function mergeWithDefaults(saved: any, defaults: BriefingData): BriefingData {
+  if (!saved || typeof saved !== 'object') return defaults;
+  const result: any = { ...defaults };
+  for (const key of Object.keys(defaults) as (keyof BriefingData)[]) {
+    const savedVal = saved[key];
+    const defaultVal = defaults[key];
+    if (savedVal === undefined || savedVal === null) {
+      result[key] = defaultVal;
+    } else if (Array.isArray(defaultVal)) {
+      result[key] = Array.isArray(savedVal) ? savedVal : defaultVal;
+    } else if (typeof defaultVal === 'object' && defaultVal !== null) {
+      result[key] = typeof savedVal === 'object' && savedVal !== null
+        ? { ...defaultVal, ...savedVal }
+        : defaultVal;
+    } else {
+      result[key] = savedVal;
+    }
+  }
+  return result;
+}
 
 export default function App() {
   const [data, setData] = useState<BriefingData>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
-        return JSON.parse(saved);
+        const merged = mergeWithDefaults(JSON.parse(saved), initialBriefingData);
+        return sanitizeSelectionsForPlan(merged, merged.tipoProjeto || 'Landing page profissional');
       }
     } catch (e) {
       console.error(e);
@@ -192,7 +213,7 @@ export default function App() {
             Preencha as informações do seu site para iniciarmos o projeto.
           </p>
           <p>
-            Ao concluir, todas as informações e o documento oficial do seu site são enviados diretamente pelo <strong>WhatsApp</strong> para <strong>Lucas Gomes</strong> ({WHATSAPP_DISPLAY_NUMBER}). Você também poderá enviar sua logomarca e fotos na conversa.
+            Ao concluir, todas as informações e o documento oficial do seu site são enviados diretamente pelo <strong>WhatsApp</strong> da <strong>Gomes Studio</strong>. Você também poderá enviar sua logomarca e fotos na conversa.
           </p>
         </div>
 
@@ -214,7 +235,7 @@ export default function App() {
           <div>
             <h3 className="text-base font-bold text-white">Finalização & Envio do Projeto</h3>
             <p className="text-xs text-[#94a3b8] mt-1.5 max-w-md mx-auto leading-relaxed">
-              Ao clicar no botão abaixo, todas as respostas do seu briefing e o documento oficial do projeto são enviados diretamente pelo <strong>WhatsApp</strong> para <strong>Lucas Gomes</strong> ({WHATSAPP_DISPLAY_NUMBER}).
+              Ao clicar no botão abaixo, todas as respostas do seu briefing e o documento oficial do projeto são enviados diretamente pelo <strong>WhatsApp</strong> da <strong>Gomes Studio</strong>.
             </p>
           </div>
 

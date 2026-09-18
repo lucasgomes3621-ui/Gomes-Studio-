@@ -1,10 +1,11 @@
 import { BriefingData, SectionMeta } from '../types';
 
 export const WHATSAPP_TARGET_NUMBER = '5533991031052';
-export const WHATSAPP_DISPLAY_NUMBER = '(33) 99103-1052';
-export const WHATSAPP_CONTACT_NAME = 'Lucas Gomes';
+export const WHATSAPP_DISPLAY_NUMBER = '';
+export const WHATSAPP_CONTACT_NAME = 'Gomes Studio';
 
 export const initialBriefingData: BriefingData = {
+  tipoProjeto: 'Landing page profissional',
   empresa: {
     nome: '',
     segmento: '',
@@ -143,8 +144,12 @@ export function calculateProgress(data: BriefingData): { filledCount: number; to
 export function formatWhatsAppMessage(data: BriefingData, pdfDirectUrl?: string): string {
   const lines: string[] = [];
 
-  lines.push('📋 *BRIEFING PROFISSIONAL DO SITE*');
+  lines.push('📋 *BRIEFING PROFISSIONAL DO SITE - GOMES STUDIO*');
   lines.push('━━━━━━━━━━━━━━━━━━━━');
+  if (data.tipoProjeto) {
+    lines.push(`🚀 *PROJETO:* ${data.tipoProjeto.toUpperCase()}`);
+    lines.push('━━━━━━━━━━━━━━━━━━━━');
+  }
   lines.push('');
 
   // 1
@@ -321,9 +326,7 @@ export function formatWhatsAppMessage(data: BriefingData, pdfDirectUrl?: string)
   }
 
   lines.push('━━━━━━━━━━━━━━━━━━━━');
-  lines.push(`👨‍💻 *Desenvolvedor Responsável:* ${WHATSAPP_CONTACT_NAME}`);
-  lines.push(`📞 *WhatsApp:* ${WHATSAPP_DISPLAY_NUMBER}`);
-  lines.push('✨ _Enviado via Briefing Profissional_');
+  lines.push('✨ _Enviado via Briefing Gomes Studio_');
 
   return lines.join('\n');
 }
@@ -347,7 +350,7 @@ export function getDirectWhatsAppUrl(
 export function formatEmailBody(data: BriefingData): string {
   const lines: string[] = [];
 
-  lines.push('Olá Lucas Gomes!');
+  lines.push('Olá Gomes Studio!');
   lines.push('');
   lines.push('Estou enviando o Briefing e os arquivos de mídia para a criação do nosso site.');
   lines.push('');

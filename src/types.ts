@@ -11,6 +11,8 @@ export interface UploadedMediaItem {
 }
 
 export interface BriefingData {
+  // Tipo de Projeto Escolhido
+  tipoProjeto: 'Landing page essencial' | 'Landing page profissional' | 'Pagina completa profissional' | '';
   // 1. Informações da Empresa
   empresa: {
     nome: string;

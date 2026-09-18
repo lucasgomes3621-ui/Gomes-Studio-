@@ -1,6 +1,5 @@
 import { jsPDF } from 'jspdf';
 import { BriefingData } from '../types';
-import { WHATSAPP_CONTACT_NAME, WHATSAPP_DISPLAY_NUMBER } from './briefingDefaults';
 
 export function generateBriefingPDF(data: BriefingData): void {
   const doc = new jsPDF({
@@ -30,7 +29,7 @@ export function generateBriefingPDF(data: BriefingData): void {
     doc.setFontSize(7);
     doc.setFont('helvetica', 'normal');
     doc.text(`GOMES STUDIO • BRIEFING - ${data.empresa.nome || 'PROJETO WEB'}`, margin, 5.5);
-    doc.text(`Dev: ${WHATSAPP_CONTACT_NAME} • ${WHATSAPP_DISPLAY_NUMBER}`, pageWidth - margin, 5.5, { align: 'right' });
+    doc.text('Desenvolvimento: Gomes Studio', pageWidth - margin, 5.5, { align: 'right' });
     y = 15;
   };
 
@@ -68,9 +67,31 @@ export function generateBriefingPDF(data: BriefingData): void {
     minute: '2-digit',
   });
   doc.text(`Design que Conecta, Soluções que Impulsionam  |  ${today}`, margin + 6, y + 26.5);
-  doc.text(`Desenvolvedor: ${WHATSAPP_CONTACT_NAME} (${WHATSAPP_DISPLAY_NUMBER})`, margin + 6, y + 31);
+  doc.text('Desenvolvimento: Gomes Studio', margin + 6, y + 31);
 
   y += 40;
+
+  // Project Type Banner in PDF
+  if (data.tipoProjeto) {
+    doc.setFillColor(15, 23, 42);
+    doc.roundedRect(margin, y, contentWidth, 10, 2, 2, 'F');
+    doc.setFillColor(0, 102, 255);
+    doc.roundedRect(margin + 2, y + 2, 6, 6, 1, 1, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'bold');
+    doc.text('★', margin + 5, y + 6, { align: 'center' });
+
+    doc.setTextColor(56, 189, 248);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.text('TIPO DE PROJETO:', margin + 11, y + 6.5);
+
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(8.5);
+    doc.text(data.tipoProjeto.toUpperCase(), margin + 45, y + 6.5);
+    y += 14;
+  }
 
   // Helper function to draw section header
   const drawSectionHeader = (title: string, iconNumber: string) => {
@@ -348,10 +369,10 @@ export function generateBriefingPDF(data: BriefingData): void {
   doc.setTextColor(15, 23, 42);
   doc.setFontSize(8);
   doc.setFont('helvetica', 'bold');
-  doc.text(`Desenvolvedor Responsável: ${WHATSAPP_CONTACT_NAME}`, margin + 5, y + 6);
+  doc.text('Desenvolvimento do Projeto: Gomes Studio', margin + 5, y + 6);
 
   doc.setTextColor(16, 185, 129);
-  doc.text(`WhatsApp de Envio Oficial: ${WHATSAPP_DISPLAY_NUMBER}`, margin + 5, y + 11);
+  doc.text('Canal Oficial de Atendimento: WhatsApp', margin + 5, y + 11);
 
   doc.setTextColor(100, 116, 139);
   doc.setFontSize(7);
@@ -366,7 +387,7 @@ export function generateBriefingPDF(data: BriefingData): void {
     doc.setFontSize(7);
     doc.setFont('helvetica', 'normal');
     doc.text(
-      `Página ${i} de ${totalPages} • Briefing Profissional • ${WHATSAPP_CONTACT_NAME}`,
+      `Página ${i} de ${totalPages} • Gomes Studio • Briefing de Desenvolvimento`,
       pageWidth / 2,
       pageHeight - 8,
       { align: 'center' }
@@ -409,7 +430,7 @@ export function buildBriefingPDFDocument(data: BriefingData): jsPDF {
     doc.setFontSize(7);
     doc.setFont('helvetica', 'normal');
     doc.text(`BRIEFING PROFISSIONAL - ${data.empresa.nome || 'PROJETO WEB'}`, margin, 5.5);
-    doc.text(`Dev: ${WHATSAPP_CONTACT_NAME} • ${WHATSAPP_DISPLAY_NUMBER}`, pageWidth - margin, 5.5, { align: 'right' });
+    doc.text('Desenvolvimento: Gomes Studio', pageWidth - margin, 5.5, { align: 'right' });
     y = 15;
   };
 
@@ -439,7 +460,7 @@ export function buildBriefingPDFDocument(data: BriefingData): jsPDF {
     minute: '2-digit',
   });
   doc.text(`Gerado em: ${today}  |  Segmento: ${data.empresa.segmento || 'Não informado'}`, margin + 6, y + 23);
-  doc.text(`Desenvolvedor: ${WHATSAPP_CONTACT_NAME}  |  WhatsApp: ${WHATSAPP_DISPLAY_NUMBER}`, margin + 6, y + 28);
+  doc.text('Desenvolvimento: Gomes Studio', margin + 6, y + 28);
 
   y += 38;
 
@@ -715,10 +736,10 @@ export function buildBriefingPDFDocument(data: BriefingData): jsPDF {
   doc.setTextColor(15, 23, 42);
   doc.setFontSize(8);
   doc.setFont('helvetica', 'bold');
-  doc.text(`Desenvolvedor Responsável: ${WHATSAPP_CONTACT_NAME}`, margin + 5, y + 6);
+  doc.text('Desenvolvimento do Projeto: Gomes Studio', margin + 5, y + 6);
 
   doc.setTextColor(16, 185, 129);
-  doc.text(`WhatsApp de Envio Oficial: ${WHATSAPP_DISPLAY_NUMBER}`, margin + 5, y + 11);
+  doc.text('Canal Oficial de Atendimento: WhatsApp', margin + 5, y + 11);
 
   doc.setTextColor(100, 116, 139);
   doc.setFontSize(7);
@@ -732,7 +753,7 @@ export function buildBriefingPDFDocument(data: BriefingData): jsPDF {
     doc.setFontSize(7);
     doc.setFont('helvetica', 'normal');
     doc.text(
-      `Página ${i} de ${totalPages} • Briefing Profissional • ${WHATSAPP_CONTACT_NAME}`,
+      `Página ${i} de ${totalPages} • Gomes Studio • Briefing de Desenvolvimento`,
       pageWidth / 2,
       pageHeight - 8,
       { align: 'center' }

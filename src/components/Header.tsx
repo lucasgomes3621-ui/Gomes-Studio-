@@ -20,7 +20,7 @@ export const Header: React.FC<HeaderProps> = ({
   onDownloadPDF,
 }) => {
   return (
-    <header className="sticky top-0 z-40 bg-[#070d1a]/95 backdrop-blur-md border-b border-[#1e293b] px-4 py-3 transition-all shadow-lg shadow-black/40">
+    <header className="sticky top-0 z-40 bg-[#07090C]/90 backdrop-blur-md border-b border-white/[0.08] px-4 py-3 transition-all shadow-[0_4px_24px_rgba(0,0,0,0.6)]">
       <div className="max-w-2xl mx-auto">
         {/* Main Brand & Action Tools */}
         <div className="flex items-center justify-between gap-3">
@@ -32,27 +32,27 @@ export const Header: React.FC<HeaderProps> = ({
               type="button"
               onClick={onFillSample}
               title="Preencher com dados de exemplo"
-              className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg bg-[#171f33] hover:bg-[#222a3d] text-blue-300 border border-[#2d3449] transition active:scale-95"
+              className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg bg-[#0F1218] hover:bg-[#161B24] text-[#38BDF8] border border-white/10 hover:border-[#38BDF8]/40 transition active:scale-95 cursor-pointer font-mono"
             >
-              <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-              <span className="hidden xs:inline">Exemplo</span>
+              <Sparkles className="w-3.5 h-3.5 text-[#38BDF8]" />
+              <span className="hidden xs:inline text-[11px]">Exemplo</span>
             </button>
 
             <button
               type="button"
               onClick={onDownloadPDF}
-              title="Baixar backup do briefing em PDF"
-              className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg bg-[#171f33] hover:bg-[#222a3d] text-amber-300 border border-[#2d3449] transition active:scale-95"
+              title="Baixar cópia do briefing em PDF"
+              className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg bg-[#0F1218] hover:bg-[#161B24] text-amber-300 border border-white/10 hover:border-amber-400/40 transition active:scale-95 cursor-pointer font-mono"
             >
               <FileDown className="w-3.5 h-3.5 text-amber-400" />
-              <span className="hidden sm:inline">PDF</span>
+              <span className="hidden sm:inline text-[11px]">PDF</span>
             </button>
 
             <button
               type="button"
               onClick={onToggleAll}
-              title={allExpanded ? "Recolher todas" : "Expandir todas"}
-              className="p-1.5 rounded-lg bg-[#171f33] hover:bg-[#222a3d] text-[#94a3b8] hover:text-[#f8fafc] border border-[#2d3449] transition active:scale-95"
+              title={allExpanded ? "Recolher todas as seções" : "Expandir todas as seções"}
+              className="p-1.5 rounded-lg bg-[#0F1218] hover:bg-[#161B24] text-[#94A3B8] hover:text-white border border-white/10 hover:border-white/20 transition active:scale-95 cursor-pointer"
             >
               {allExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             </button>
@@ -61,7 +61,7 @@ export const Header: React.FC<HeaderProps> = ({
               type="button"
               onClick={onClear}
               title="Limpar formulário"
-              className="p-1.5 rounded-lg bg-[#171f33] hover:bg-red-950/40 text-[#94a3b8] hover:text-red-400 border border-[#2d3449] transition active:scale-95"
+              className="p-1.5 rounded-lg bg-[#0F1218] hover:bg-red-950/30 text-[#94A3B8] hover:text-red-400 border border-white/10 hover:border-red-500/30 transition active:scale-95 cursor-pointer"
             >
               <Trash2 className="w-4 h-4" />
             </button>
@@ -70,18 +70,18 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Progress Bar & Percentage */}
         <div className="mt-2.5">
-          <div className="flex justify-between items-center text-xs mb-1">
-            <span className="text-[#94a3b8] font-medium flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-blue-400" />
-              Progresso do Briefing
+          <div className="flex justify-between items-center text-xs mb-1 font-mono">
+            <span className="text-[#94A3B8] font-medium flex items-center gap-1.5 text-[11px]">
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#38BDF8]" />
+              PROGRESSO DO BRIEFING
             </span>
-            <span className="text-blue-300 font-semibold">
+            <span className="text-[#38BDF8] font-semibold text-[11px]">
               {progress.filledCount} / {progress.totalCount} ({progress.percentage}%)
             </span>
           </div>
-          <div className="w-full h-1.5 bg-[#171f33] rounded-full overflow-hidden border border-[#222a3d]">
+          <div className="w-full h-1.5 bg-[#0F1218] rounded-full overflow-hidden border border-white/[0.08]">
             <div
-              className="h-full bg-gradient-to-r from-blue-600 to-blue-400 transition-all duration-300 rounded-full shadow-[0_0_8px_rgba(37,99,235,0.5)]"
+              className="h-full bg-gradient-to-r from-[#0066FF] via-[#0EA5E9] to-[#38BDF8] transition-all duration-300 rounded-full shadow-[0_0_12px_rgba(56,189,248,0.6)]"
               style={{ width: `${progress.percentage}%` }}
             />
           </div>
@@ -90,3 +90,4 @@ export const Header: React.FC<HeaderProps> = ({
     </header>
   );
 };
+
