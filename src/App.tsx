@@ -4,13 +4,12 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { BriefingData } from './types';
+import { BriefingData, StepId } from './types';
 import {
   initialBriefingData,
   calculateProgress,
   WHATSAPP_TARGET_NUMBER,
   getDirectWhatsAppUrl,
-  getDirectEmailUrls,
   formatWhatsAppMessage,
 } from './utils/briefingDefaults';
 import { sampleBriefingData } from './utils/sampleData';
@@ -18,12 +17,12 @@ import { generateBriefingPDF, getBriefingPDFBase64 } from './utils/pdfGenerator'
 import { sendBriefingByEmail, uploadBriefingPDF } from './utils/uploader';
 import { Header } from './components/Header';
 import { FormSections } from './components/FormSections';
-import { WhatsAppPreviewModal } from './components/WhatsAppPreviewModal';
+import { SuccessScreen } from './components/SuccessScreen';
 import { GomesStudioFooterBanner } from './components/GomesStudioBrand';
-import { sanitizeSelectionsForPlan } from './utils/projectTypeConfig';
-import { Send, CheckCircle2, MessageSquare, FileDown, Trash2, AlertTriangle, X, Mail, Loader2 } from 'lucide-react';
+import { Clock, Sparkles, Trash2, X, AlertTriangle } from 'lucide-react';
 
-const STORAGE_KEY = 'briefing_profissional_data_v1';
+const STORAGE_KEY = 'briefing_gomes_studio_v2';
+const STEP_STORAGE_KEY = 'briefing_gomes_studio_step_v2';
 
 function mergeWithDefaults(saved: any, defaults: BriefingData): BriefingData {
   if (!saved || typeof saved !== 'object') return defaults;
@@ -51,8 +50,7 @@ export default function App() {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
-        const merged = mergeWithDefaults(JSON.parse(saved), initialBriefingData);
-        return sanitizeSelectionsForPlan(merged, merged.tipoProjeto || 'Landing page profissional');
+        return mergeWithDefaults(JSON.parse(saved), initialBriefingData);
       }
     } catch (e) {
       console.error(e);
@@ -60,15 +58,26 @@ export default function App() {
     return initialBriefingData;
   });
 
-  const [activeSection, setActiveSection] = useState<number | null>(1);
-  const [allExpanded, setAllExpanded] = useState<boolean>(false);
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState<boolean>(false);
+  const [currentStep, setCurrentStep] = useState<StepId>(() => {
+    try {
+      const saved = localStorage.getItem(STEP_STORAGE_KEY);
+      if (saved) {
+        const num = parseInt(saved, 10);
+        if (num >= 1 && num <= 8) return num as StepId;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    return 1;
+  });
+
   const [isClearConfirmOpen, setIsClearConfirmOpen] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [isSendingSubmit, setIsSendingSubmit] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [submissionCode, setSubmissionCode] = useState<string>('GS-8021');
 
-  // Auto-save on change
+  // Auto-save data
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -77,6 +86,15 @@ export default function App() {
     }
   }, [data]);
 
+  // Auto-save step
+  useEffect(() => {
+    try {
+      localStorage.setItem(STEP_STORAGE_KEY, currentStep.toString());
+    } catch (e) {
+      console.error(e);
+    }
+  }, [currentStep]);
+
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3500);
@@ -84,39 +102,10 @@ export default function App() {
 
   const progress = calculateProgress(data);
 
-  const handleToggleSection = (id: number) => {
-    if (allExpanded) {
-      setAllExpanded(false);
-      setActiveSection(activeSection === id ? null : id);
-    } else {
-      setActiveSection(activeSection === id ? null : id);
-    }
-  };
-
-  const handleGoToSection = (id: number) => {
-    setActiveSection(id);
-    const element = document.getElementById(`section-${id}`);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  };
-
-  const handleToggleAll = () => {
-    if (allExpanded) {
-      setAllExpanded(false);
-      setActiveSection(null);
-    } else {
-      setAllExpanded(true);
-      setActiveSection(null);
-    }
-  };
-
   const handleFillSample = () => {
     setData(sampleBriefingData);
     showToast('Dados de exemplo preenchidos com sucesso!');
   };
-
-  const [isSendingWhatsApp, setIsSendingWhatsApp] = useState(false);
 
   const handleClear = () => {
     setIsClearConfirmOpen(true);
@@ -124,46 +113,62 @@ export default function App() {
 
   const handleConfirmClear = () => {
     setData(initialBriefingData);
+    setCurrentStep(1);
+    setIsSubmitted(false);
     try {
       localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(STEP_STORAGE_KEY);
     } catch (e) {
       console.error(e);
     }
     setIsClearConfirmOpen(false);
-    showToast('Todos os campos foram limpos com sucesso!');
+    showToast('Todos os campos foram reiniciados.');
   };
 
-  const handleOpenEmailForMedia = () => {
-    // Open prefilled Gmail directly with company info and briefing summary
-    const { gmailWebUrl, mailtoUrl } = getDirectEmailUrls(data, 'lucasgomes3621@gmail.com');
-    window.open(gmailWebUrl || mailtoUrl, '_blank');
+  const handleDownloadPDF = () => {
+    try {
+      generateBriefingPDF(data);
+      showToast('PDF gerado e baixado com sucesso!');
+    } catch (err) {
+      console.error('Error generating PDF:', err);
+      showToast('Erro ao gerar PDF. Tente novamente.');
+    }
   };
 
-  const handleDirectWhatsAppSend = async () => {
-    setIsSendingWhatsApp(true);
+  const handleWhatsAppSend = (pdfUrl?: string) => {
+    const url = getDirectWhatsAppUrl(data, WHATSAPP_TARGET_NUMBER, pdfUrl);
+    window.open(url, '_blank');
+  };
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    const code = `GS-${Math.floor(1000 + Math.random() * 9000)}`;
+    setSubmissionCode(code);
+
     let pdfDirectUrl: string | undefined;
 
     try {
-      // 1. Generate base64 of the PDF
+      // 1. Generate base64 PDF
       let pdfBase64 = '';
       try {
         pdfBase64 = getBriefingPDFBase64(data);
       } catch (err) {
-        console.warn('PDF Base64 creation:', err);
+        console.warn('PDF Base64 creation error:', err);
       }
 
-      // 2. Upload PDF to server to generate permanent download link
+      // 2. Upload PDF to server for a permanent link if available
       if (pdfBase64) {
         try {
-          const uploadRes = await uploadBriefingPDF(pdfBase64, data.empresa.nome || 'Cliente');
+          const clientName = data.sobreNegocio?.nomeEmpresa || data.sobreVoce?.nome || 'Cliente';
+          const uploadRes = await uploadBriefingPDF(pdfBase64, clientName);
           if (uploadRes.success && (uploadRes.fullUrl || uploadRes.url)) {
             pdfDirectUrl = uploadRes.fullUrl || (typeof window !== 'undefined' ? `${window.location.origin}${uploadRes.url}` : uploadRes.url);
           }
         } catch (uploadErr) {
-          console.warn('Upload do PDF falhou:', uploadErr);
+          console.warn('PDF upload warning:', uploadErr);
         }
 
-        // 3. Dispatch backup email to lucasgomes3621@gmail.com with the PDF attached
+        // 3. Dispatch backup email to Gomes Studio
         sendBriefingByEmail(
           data,
           pdfBase64,
@@ -171,175 +176,140 @@ export default function App() {
           'lucasgomes3621@gmail.com'
         ).catch((e) => console.error(e));
       }
-
-      showToast('✓ Respostas e PDF anexados para envio!');
     } catch (e) {
       console.error(e);
     } finally {
-      setIsSendingWhatsApp(false);
-      // 4. Open WhatsApp with formatted text + direct PDF link
-      const url = getDirectWhatsAppUrl(data, WHATSAPP_TARGET_NUMBER, pdfDirectUrl);
-      window.open(url, '_blank');
-    }
-  };
+      setIsSubmitting(false);
+      setIsSubmitted(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  const handleDownloadPDF = () => {
-    try {
-      generateBriefingPDF(data);
-      showToast('PDF de Backup gerado e baixado com sucesso!');
-    } catch (err) {
-      console.error('Error generating PDF:', err);
-      showToast('Erro ao gerar PDF. Tente novamente.');
+      // Automatically open WhatsApp with the briefing info
+      setTimeout(() => {
+        handleWhatsAppSend(pdfDirectUrl);
+      }, 600);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#0b1326] text-[#f8fafc] pb-12">
-      {/* Sticky Header & Progress Navigator */}
-      <Header
-        progress={progress}
-        onFillSample={handleFillSample}
-        onClear={handleClear}
-        onToggleAll={handleToggleAll}
-        allExpanded={allExpanded}
-        onDownloadPDF={handleDownloadPDF}
-      />
-
-      {/* Main Container */}
-      <main className="max-w-2xl mx-auto px-4 pt-4">
-        {/* Intro Banner */}
-        <div className="mb-4 p-3.5 bg-[#131b2e] border border-[#222a3d] rounded-xl text-xs text-[#94a3b8] leading-relaxed">
-          <p className="font-medium text-[#f8fafc] mb-0.5">
-            Preencha as informações do seu site para iniciarmos o projeto.
-          </p>
-          <p>
-            Ao concluir, todas as informações e o documento oficial do seu site são enviados diretamente pelo <strong>WhatsApp</strong> da <strong>Gomes Studio</strong>. Você também poderá enviar sua logomarca e fotos na conversa.
-          </p>
-        </div>
-
-        {/* 17 Form Sections */}
-        <FormSections
-          data={data}
-          onChange={setData}
-          openSection={allExpanded ? null : activeSection}
-          onToggleSection={handleToggleSection}
-          onGoToSection={handleGoToSection}
-          searchQuery={searchQuery}
+    <div className="min-h-screen bg-[#070A10] text-[#f8fafc] flex flex-col justify-between selection:bg-[#0066FF] selection:text-white">
+      <div>
+        {/* Sticky Header & Navigation Progress */}
+        <Header
+          currentStep={currentStep}
+          progress={progress}
+          onFillSample={handleFillSample}
+          onClear={handleClear}
+          onDownloadPDF={handleDownloadPDF}
         />
 
-        {/* Action card before footer */}
-        <div className="mt-6 p-5 bg-gradient-to-br from-[#131b2e] to-[#101b2b] border border-emerald-500/40 rounded-2xl text-center space-y-4 shadow-xl">
-          <div className="w-12 h-12 mx-auto rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/40 shadow-inner">
-            <MessageSquare className="w-6 h-6" />
-          </div>
-          <div>
-            <h3 className="text-base font-bold text-white">Finalização & Envio do Projeto</h3>
-            <p className="text-xs text-[#94a3b8] mt-1.5 max-w-md mx-auto leading-relaxed">
-              Ao clicar no botão abaixo, todas as respostas do seu briefing e o documento oficial do projeto são enviados diretamente pelo <strong>WhatsApp</strong> da <strong>Gomes Studio</strong>.
-            </p>
-          </div>
+        {/* Main Content Area */}
+        <main className="max-w-2xl mx-auto px-4 pt-6 pb-12">
+          {/* If submitted: Success Screen */}
+          {isSubmitted ? (
+            <SuccessScreen
+              data={data}
+              onReset={handleConfirmClear}
+              onDownloadPDF={handleDownloadPDF}
+              onOpenWhatsApp={() => handleWhatsAppSend()}
+              submissionCode={submissionCode}
+            />
+          ) : (
+            <div className="space-y-6">
+              {/* Welcoming Hero Header */}
+              {currentStep === 1 && (
+                <div className="p-6 rounded-3xl bg-gradient-to-br from-[#0B1326] via-[#090E1D] to-[#070A12] border border-white/[0.08] shadow-2xl relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-[#0066FF]/10 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="flex flex-col sm:flex-row gap-3 pt-1 justify-center max-w-lg mx-auto">
-            <button
-              type="button"
-              onClick={handleDirectWhatsAppSend}
-              disabled={isSendingWhatsApp}
-              className="flex-1 py-3.5 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-75 text-white text-sm font-bold transition active:scale-95 flex items-center justify-center gap-2.5 shadow-lg shadow-emerald-600/25 border border-emerald-400/30 cursor-pointer"
-            >
-              {isSendingWhatsApp ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin text-white" />
-                  <span>Preparando envio no WhatsApp...</span>
-                </>
-              ) : (
-                <>
-                  <Send className="w-4 h-4" />
-                  <span>Enviar pelo WhatsApp</span>
-                </>
+                  <div className="relative space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0066FF]/15 border border-[#38BDF8]/30 text-[11px] font-mono font-medium text-[#38BDF8]">
+                        <Sparkles className="w-3 h-3 text-[#38BDF8]" />
+                        GOMES STUDIO · BRIEFING DE PRESENÇA DIGITAL
+                      </span>
+
+                      <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-mono text-[#94A3B8]">
+                        <Clock className="w-3.5 h-3.5 text-[#38BDF8]" />
+                        Leva apenas alguns minutos
+                      </span>
+                    </div>
+
+                    <h1 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight leading-snug">
+                      Vamos criar a página certa para o seu objetivo.
+                    </h1>
+
+                    <p className="text-xs sm:text-sm text-[#94A3B8] leading-relaxed">
+                      Conte um pouco sobre sua empresa, seu projeto e o que você deseja apresentar. Com essas informações, a <strong>GOMES STUDIO</strong> poderá entender sua necessidade e desenvolver uma experiência digital alinhada ao seu negócio.
+                    </p>
+                  </div>
+                </div>
               )}
-            </button>
-            <button
-              type="button"
-              onClick={handleDownloadPDF}
-              className="py-3 px-4 rounded-xl bg-[#171f33] hover:bg-[#222a3d] text-amber-300 text-xs font-bold border border-amber-500/30 transition active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <FileDown className="w-4 h-4 text-amber-400" />
-              <span>Baixar Cópia em PDF</span>
-            </button>
-          </div>
-        </div>
 
-        {/* Footer Brand & Slogan */}
-        <footer className="mt-8 pb-6 border-t border-[#1e293b]/60">
-          <GomesStudioFooterBanner />
-          <p className="text-[11px] text-[#475569] text-center mt-2">
-            Preencha no seu ritmo. O formulário salva tudo automaticamente no seu navegador.
-          </p>
-        </footer>
-      </main>
+              {/* 8-Step Multi-Step Controller */}
+              <FormSections
+                data={data}
+                onChange={setData}
+                currentStep={currentStep}
+                onStepChange={setCurrentStep}
+                onSubmit={handleSubmit}
+                isSubmitting={isSubmitting}
+              />
+            </div>
+          )}
+        </main>
+      </div>
 
-      {/* WhatsApp Modal */}
-      <WhatsAppPreviewModal
-        isOpen={isWhatsAppModalOpen}
-        onClose={() => setIsWhatsAppModalOpen(false)}
-        data={data}
-        onEmailSent={(msg) => showToast(msg)}
-      />
-
+      {/* Footer Banner */}
+      <GomesStudioFooterBanner />
 
       {/* Clear Confirmation Modal */}
       {isClearConfirmOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-[#131b2e] border border-[#2d3449] rounded-2xl w-full max-w-sm p-5 shadow-2xl space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
+          <div className="w-full max-w-sm p-5 rounded-2xl bg-[#0B1220] border border-white/15 space-y-4 shadow-2xl">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center border border-red-500/30">
-                  <AlertTriangle className="w-5 h-5" />
-                </div>
-                <h3 className="font-bold text-white text-base">Limpar Formulário?</h3>
+              <div className="flex items-center gap-2 text-rose-400 font-bold text-sm">
+                <AlertTriangle className="w-4 h-4" />
+                <span>Limpar briefing?</span>
               </div>
               <button
                 type="button"
                 onClick={() => setIsClearConfirmOpen(false)}
-                className="p-1 rounded-lg text-[#94a3b8] hover:text-white hover:bg-[#171f33] transition"
+                className="text-[#94A3B8] hover:text-white p-1"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <p className="text-xs text-[#94a3b8] leading-relaxed">
-              Tem certeza de que deseja apagar todos os dados digitados e fotos selecionadas? Esta ação resetará o formulário do início.
+            <p className="text-xs text-[#94A3B8] leading-relaxed">
+              Todas as respostas preenchidas serão apagadas e você iniciará o briefing do zero. Deseja continuar?
             </p>
 
             <div className="flex gap-2 pt-1">
               <button
                 type="button"
                 onClick={() => setIsClearConfirmOpen(false)}
-                className="flex-1 py-2.5 px-3 rounded-xl bg-[#171f33] hover:bg-[#222a3d] text-[#f8fafc] text-xs font-semibold border border-[#2d3449] transition active:scale-95"
+                className="flex-1 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-white border border-white/10 transition"
               >
                 Cancelar
               </button>
               <button
                 type="button"
                 onClick={handleConfirmClear}
-                className="flex-1 py-2.5 px-3 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition active:scale-95 flex items-center justify-center gap-1.5 shadow-lg shadow-red-600/30"
+                className="flex-1 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-xs font-bold text-white transition flex items-center justify-center gap-1.5"
               >
                 <Trash2 className="w-3.5 h-3.5" />
-                <span>Sim, Limpar</span>
+                <span>Sim, limpar</span>
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Toast Notification */}
+      {/* Floating Toast Notification */}
       {toastMessage && (
-        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-emerald-600 text-white px-4 py-2 rounded-full text-xs font-semibold shadow-xl flex items-center gap-2 border border-emerald-400">
-          <CheckCircle2 className="w-3.5 h-3.5" />
-          <span>{toastMessage}</span>
+        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#0066FF] text-white text-xs font-semibold shadow-2xl border border-[#38BDF8]/40 animate-fadeIn">
+          {toastMessage}
         </div>
       )}
     </div>
   );
 }
-

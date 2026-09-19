@@ -1,6 +1,6 @@
 {
-  "name": "GOMES STUDIO - Briefing",
-  "description": "GOMES STUDIO - Design que conecta, soluções que impulsionam. Formulário interativo mobile-first de briefing de desenvolvimento web com envio integrado para WhatsApp e geração de PDF.",
+  "name": "GOMES STUDIO - Briefing de Presença Digital",
+  "description": "GOMES STUDIO · Briefing de Presença Digital. Vamos criar a página certa para o seu objetivo. Landing pages, páginas comerciais, institucionais e presença digital.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

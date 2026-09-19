@@ -1,10 +1,159 @@
-import { BriefingData, SectionMeta } from '../types';
+import { BriefingData, StepMeta } from '../types';
 
 export const WHATSAPP_TARGET_NUMBER = '5533991031052';
-export const WHATSAPP_DISPLAY_NUMBER = '';
+export const WHATSAPP_DISPLAY_NUMBER = '(33) 99103-1052';
 export const WHATSAPP_CONTACT_NAME = 'Gomes Studio';
 
+export const STEPS: StepMeta[] = [
+  {
+    id: 1,
+    numberStr: '01',
+    title: 'Sobre Você',
+    shortTitle: 'Sobre Você',
+    subtitle: 'Precisamos de algumas informações para saber com quem estamos falando.',
+    icon: 'User',
+  },
+  {
+    id: 2,
+    numberStr: '02',
+    title: 'Sobre o Negócio',
+    shortTitle: 'O Negócio',
+    subtitle: 'Queremos entender melhor o seu negócio, sua atuação e onde ele está presente.',
+    icon: 'Building2',
+  },
+  {
+    id: 3,
+    numberStr: '03',
+    title: 'Objetivo',
+    shortTitle: 'Objetivo',
+    subtitle: 'Essa resposta nos ajuda a entender qual experiência faz mais sentido para o seu negócio.',
+    icon: 'Target',
+  },
+  {
+    id: 4,
+    numberStr: '04',
+    title: 'Sobre o Projeto',
+    shortTitle: 'Projeto',
+    subtitle: 'Agora vamos entender o conteúdo que sua página precisa ter.',
+    icon: 'Layers',
+  },
+  {
+    id: 5,
+    numberStr: '05',
+    title: 'Referências e Estilo',
+    shortTitle: 'Referências',
+    subtitle: 'Referências ajudam a entender o estilo visual que você deseja.',
+    icon: 'Sparkles',
+  },
+  {
+    id: 6,
+    numberStr: '06',
+    title: 'Materiais',
+    shortTitle: 'Materiais',
+    subtitle: 'Se você já possui materiais, eles podem nos ajudar a entender melhor a identidade do seu negócio.',
+    icon: 'FolderUp',
+  },
+  {
+    id: 7,
+    numberStr: '07',
+    title: 'Contato e Direcionamento',
+    shortTitle: 'Contato',
+    subtitle: 'Vamos definir o principal caminho para o visitante entrar em contato com sua empresa.',
+    icon: 'Send',
+  },
+  {
+    id: 8,
+    numberStr: '08',
+    title: 'Finalização',
+    shortTitle: 'Finalização',
+    subtitle: 'Confira suas informações antes de enviar o briefing.',
+    icon: 'CheckCircle2',
+  },
+];
+
 export const initialBriefingData: BriefingData = {
+  // Etapa 01 — Sobre Você
+  sobreVoce: {
+    nome: '',
+    email: '',
+    whatsapp: '',
+  },
+
+  // Etapa 02 — Sobre o Negócio
+  sobreNegocio: {
+    nomeEmpresa: '',
+    segmento: '',
+    instagram: '',
+    siteAtual: '',
+    cidade: '',
+    estado: '',
+    regioesAtendimento: '',
+    outrasRegioes: '',
+    possuiEnderecoFisico: '',
+    endereco: '',
+    numero: '',
+    complemento: '',
+    bairro: '',
+    cep: '',
+    exibirMapa: '',
+    descricaoAtuacao: '',
+  },
+
+  // Etapa 03 — Objetivo
+  objetivo: {
+    principal: '',
+    outroDescricao: '',
+  },
+
+  // Etapa 04 — Sobre o Projeto
+  projeto: {
+    produtosServicos: '',
+    infoIndispensaveis: '',
+    possuiTextos: '',
+    possuiIdentidadeVisual: '',
+  },
+
+  // Etapa 05 — Referências e Estilo
+  referenciasEstilo: {
+    sitesGosta: '',
+    estilos: [],
+    naoGosta: '',
+  },
+
+  // Etapa 06 — Materiais
+  materiais: {
+    statusItens: {
+      logo: '',
+      fotos: '',
+      videos: '',
+      textos: '',
+      redesSociais: '',
+      identidadeVisual: '',
+      catalogo: '',
+    },
+    linkDrive: '',
+    arquivosUpload: [],
+    observacoes: '',
+  },
+
+  // Etapa 07 — Contato e Direcionamento
+  contato: {
+    canalPrincipal: '',
+    canalPrincipalValor: '',
+    whatsapp: '',
+    instagram: '',
+    telefone: '',
+    email: '',
+    outro: '',
+  },
+
+  // Etapa 08 — Informações Adicionais & Finalização
+  informacoesAdicionais: {
+    detalhesExtras: '',
+    concordouPrivacidade: false,
+  },
+
+  // Backwards compatibility legacy fields
   tipoProjeto: 'Landing page profissional',
   empresa: {
     nome: '',
@@ -39,294 +188,237 @@ export const initialBriefingData: BriefingData = {
     historia: '',
     sobreNos: '',
   },
-  produtosServicos: [
-    { nome: '', descricao: '', preco: '' },
-    { nome: '', descricao: '', preco: '' },
-    { nome: '', descricao: '', preco: '' },
-  ],
-  planos: {
-    possuiPlanos: '',
-    detalhes: '',
-  },
-  agendamento: {
-    possuiAgendamento: '',
-    canais: [],
-    maisInformacoes: '',
-  },
-  horarios: {
-    segundaSexta: '',
-    sabados: '',
-    domingosFeriados: '',
-  },
-  localizacao: {
-    enderecoExibicao: '',
-    pontoReferencia: '',
-    exibirMapa: '',
-  },
-  diferenciais: {
-    itens: '',
-  },
-  fraseEfeito: {
-    frasePrincipal: '',
-  },
-  botoesAcoes: {
-    selecionados: [],
-  },
-  dominio: {
-    possuiDominio: '',
-    nomeDominio: '',
-  },
-  paginasSite: {
-    selecionadas: [],
-  },
-  referencias: {
-    gosta: '',
-    naoQuer: '',
-  },
-  adicionais: {
-    outrasInfo: '',
-  },
-  checklist: {
-    confirmou: false,
-    anexouArquivos: false,
-  },
+  produtosServicos: [],
+  planos: { possuiPlanos: '', detalhes: '' },
+  agendamento: { possuiAgendamento: '', canais: [], maisInformacoes: '' },
+  horarios: { segundaSexta: '', sabados: '', domingosFeriados: '' },
+  localizacao: { enderecoExibicao: '', pontoReferencia: '', exibirMapa: '' },
+  diferenciais: { itens: '' },
+  fraseEfeito: { frasePrincipal: '' },
+  botoesAcoes: { selecionados: [] },
+  dominio: { possuiDominio: '', nomeDominio: '' },
+  paginasSite: { selecionadas: [] },
+  referencias: { gosta: '', naoQuer: '' },
+  adicionais: { outrasInfo: '' },
+  checklist: { confirmou: false, anexouArquivos: false },
 };
 
-export const SECTIONS: SectionMeta[] = [
-  { id: 1, key: 'empresa', title: '1. Informações da Empresa', shortTitle: 'Empresa', icon: 'Building2' },
-  { id: 2, key: 'identidadeVisual', title: '2. Identidade Visual', shortTitle: 'Identidade', icon: 'Palette' },
-  { id: 3, key: 'midia', title: '3. Fotos e Vídeos', shortTitle: 'Mídias', icon: 'Camera' },
-  { id: 4, key: 'contatos', title: '4. Redes Sociais e Contatos', shortTitle: 'Contatos', icon: 'Share2' },
-  { id: 5, key: 'sobre', title: '5. Sobre a Empresa', shortTitle: 'Sobre', icon: 'Info' },
-  { id: 6, key: 'produtosServicos', title: '6. Produtos e/ou Serviços', shortTitle: 'Produtos', icon: 'ShoppingBag' },
-  { id: 7, key: 'planos', title: '7. Planos e Valores', shortTitle: 'Planos', icon: 'CreditCard' },
-  { id: 8, key: 'agendamento', title: '8. Agendamento', shortTitle: 'Agendamento', icon: 'Calendar' },
-  { id: 9, key: 'horarios', title: '9. Horário de Funcionamento', shortTitle: 'Horários', icon: 'Clock' },
-  { id: 10, key: 'localizacao', title: '10. Localização', shortTitle: 'Localização', icon: 'MapPin' },
-  { id: 11, key: 'diferenciais', title: '11. Diferenciais da Empresa', shortTitle: 'Diferenciais', icon: 'Star' },
-  { id: 12, key: 'fraseEfeito', title: '12. Frase de Efeito', shortTitle: 'Frase Topo', icon: 'Quote' },
-  { id: 13, key: 'botoesAcoes', title: '13. Botões e Ações', shortTitle: 'Botões CTA', icon: 'MousePointerClick' },
-  { id: 14, key: 'dominio', title: '14. Domínio', shortTitle: 'Domínio', icon: 'Globe' },
-  { id: 15, key: 'paginasSite', title: '15. Páginas do Site', shortTitle: 'Páginas', icon: 'Layout' },
-  { id: 16, key: 'referencias', title: '16. Referências e Ideias', shortTitle: 'Ideias', icon: 'Lightbulb' },
-  { id: 17, key: 'adicionais', title: '17. Informações Adicionais', shortTitle: 'Adicionais', icon: 'FileText' },
-];
+/**
+ * Calculates progress across the 8 steps
+ */
+export function calculateProgress(data: BriefingData): {
+  filledCount: number;
+  totalCount: number;
+  percentage: number;
+  stepsCompleted: boolean[];
+} {
+  const stepsCompleted: boolean[] = [
+    // Step 1: Sobre Você (Nome + Email + WhatsApp)
+    Boolean(data.sobreVoce?.nome?.trim() && data.sobreVoce?.email?.trim() && data.sobreVoce?.whatsapp?.trim()),
 
-export function calculateProgress(data: BriefingData): { filledCount: number; totalCount: number; percentage: number } {
-  let filled = 0;
-  const total = 17;
+    // Step 2: Sobre o Negócio (Nome da empresa + (Segmento ou Cidade ou Descrição))
+    Boolean(data.sobreNegocio?.nomeEmpresa?.trim() && (data.sobreNegocio?.segmento?.trim() || data.sobreNegocio?.cidade?.trim() || data.sobreNegocio?.descricaoAtuacao?.trim())),
 
-  if (data.empresa.nome || data.empresa.segmento) filled++;
-  if (data.identidadeVisual.logoUrl || data.identidadeVisual.logoNome || data.identidadeVisual.coresPrincipais || data.identidadeVisual.estiloSite.length > 0) filled++;
-  if (data.midia.linksImagens || data.midia.observacoes || data.midia.arquivosInfo || (data.midia.uploadedImages && data.midia.uploadedImages.length > 0)) filled++;
-  if (data.contatos.whatsapp || data.contatos.instagram || data.contatos.email) filled++;
-  if (data.sobre.historia || data.sobre.sobreNos) filled++;
-  if (data.produtosServicos.some(p => p.nome.trim() !== '')) filled++;
-  if (data.planos.possuiPlanos || data.planos.detalhes) filled++;
-  if (data.agendamento.possuiAgendamento || data.agendamento.canais.length > 0) filled++;
-  if (data.horarios.segundaSexta || data.horarios.sabados) filled++;
-  if (data.localizacao.enderecoExibicao || data.localizacao.exibirMapa) filled++;
-  if (data.diferenciais.itens) filled++;
-  if (data.fraseEfeito.frasePrincipal) filled++;
-  if (data.botoesAcoes.selecionados.length > 0) filled++;
-  if (data.dominio.possuiDominio || data.dominio.nomeDominio) filled++;
-  if (data.paginasSite.selecionadas.length > 0) filled++;
-  if (data.referencias.gosta || data.referencias.naoQuer) filled++;
-  if (data.adicionais.outrasInfo) filled++;
+    // Step 3: Objetivo (Objetivo principal selecionado)
+    Boolean(data.objetivo?.principal),
+
+    // Step 4: Projeto (Produtos/serviços, info indispensáveis ou posse de textos)
+    Boolean(data.projeto?.produtosServicos?.trim() || data.projeto?.infoIndispensaveis?.trim() || data.projeto?.possuiTextos),
+
+    // Step 5: Referências e Estilo (Sites que gosta ou estilos selecionados)
+    Boolean(data.referenciasEstilo?.sitesGosta?.trim() || (data.referenciasEstilo?.estilos && data.referenciasEstilo.estilos.length > 0)),
+
+    // Step 6: Materiais (Upload feito, ou link drive, ou status de materiais marcados)
+    Boolean(
+      (data.materiais?.arquivosUpload && data.materiais.arquivosUpload.length > 0) ||
+      data.materiais?.linkDrive?.trim() ||
+      (data.materiais?.statusItens && Object.values(data.materiais.statusItens).some(v => Boolean(v)))
+    ),
+
+    // Step 7: Contato e Direcionamento (Canal principal definido)
+    Boolean(data.contato?.canalPrincipal),
+
+    // Step 8: Finalização (Termo de privacidade aceito)
+    Boolean(data.informacoesAdicionais?.concordouPrivacidade),
+  ];
+
+  const filledCount = stepsCompleted.filter(Boolean).length;
+  const totalCount = 8;
+  const percentage = Math.round((filledCount / totalCount) * 100);
 
   return {
-    filledCount: filled,
-    totalCount: total,
-    percentage: Math.round((filled / total) * 100),
+    filledCount,
+    totalCount,
+    percentage,
+    stepsCompleted,
   };
 }
 
+/**
+ * Formats WhatsApp submission message organized strictly by the 8 professional steps
+ */
 export function formatWhatsAppMessage(data: BriefingData, pdfDirectUrl?: string): string {
   const lines: string[] = [];
 
-  lines.push('📋 *BRIEFING PROFISSIONAL DO SITE - GOMES STUDIO*');
-  lines.push('━━━━━━━━━━━━━━━━━━━━');
-  if (data.tipoProjeto) {
-    lines.push(`🚀 *PROJETO:* ${data.tipoProjeto.toUpperCase()}`);
-    lines.push('━━━━━━━━━━━━━━━━━━━━');
+  lines.push('📋 *BRIEFING DE PRESENÇA DIGITAL · GOMES STUDIO*');
+  lines.push('━━━━━━━━━━━━━━━━━━━━━━━━');
+  lines.push('✨ _Vamos criar a página certa para o seu objetivo._');
+  lines.push('');
+
+  // 01 Sobre Você
+  lines.push('👤 *01. SOBRE VOCÊ*');
+  lines.push(`• Nome: ${data.sobreVoce?.nome || data.empresa?.nome || 'Não informado'}`);
+  if (data.sobreVoce?.email) lines.push(`• E-mail: ${data.sobreVoce.email}`);
+  if (data.sobreVoce?.whatsapp) lines.push(`• WhatsApp: ${data.sobreVoce.whatsapp}`);
+  lines.push('');
+
+  // 02 Sobre o Negócio
+  lines.push('🏢 *02. SOBRE O NEGÓCIO*');
+  lines.push(`• Empresa: ${data.sobreNegocio?.nomeEmpresa || data.empresa?.nome || 'Não informado'}`);
+  if (data.sobreNegocio?.segmento) lines.push(`• Segmento: ${data.sobreNegocio.segmento}`);
+  if (data.sobreNegocio?.instagram) lines.push(`• Instagram: ${data.sobreNegocio.instagram}`);
+  if (data.sobreNegocio?.siteAtual) lines.push(`• Site Atual: ${data.sobreNegocio.siteAtual}`);
+  
+  const localizacaoArr = [data.sobreNegocio?.cidade, data.sobreNegocio?.estado].filter(Boolean);
+  if (localizacaoArr.length > 0) lines.push(`• Localização: ${localizacaoArr.join(' - ')}`);
+  if (data.sobreNegocio?.regioesAtendimento) lines.push(`• Regiões de Atendimento: ${data.sobreNegocio.regioesAtendimento}`);
+  if (data.sobreNegocio?.outrasRegioes) lines.push(`• Cidades/Regiões: ${data.sobreNegocio.outrasRegioes}`);
+
+  if (data.sobreNegocio?.possuiEnderecoFisico === 'Sim') {
+    const endParts = [
+      data.sobreNegocio.endereco,
+      data.sobreNegocio.numero ? `nº ${data.sobreNegocio.numero}` : '',
+      data.sobreNegocio.complemento,
+      data.sobreNegocio.bairro,
+      data.sobreNegocio.cep ? `CEP: ${data.sobreNegocio.cep}` : '',
+    ].filter(Boolean);
+    if (endParts.length > 0) lines.push(`• Endereço Físico: ${endParts.join(', ')}`);
+    if (data.sobreNegocio.exibirMapa) lines.push(`• Exibir Mapa no Site: ${data.sobreNegocio.exibirMapa}`);
+  }
+
+  if (data.sobreNegocio?.descricaoAtuacao) {
+    lines.push(`• O que a empresa faz: ${data.sobreNegocio.descricaoAtuacao}`);
   }
   lines.push('');
 
-  // 1
-  lines.push('🏢 *1. Informações da Empresa*');
-  lines.push(`• Nome: ${data.empresa.nome || 'Não informado'}`);
-  if (data.empresa.segmento) lines.push(`• Ramo/Segmento: ${data.empresa.segmento}`);
-  if (data.empresa.cidadeEstado) lines.push(`• Cidade/UF: ${data.empresa.cidadeEstado}`);
-  if (data.empresa.endereco) lines.push(`• Endereço: ${data.empresa.endereco}`);
-  if (data.empresa.googleMapsLink) lines.push(`• Link Maps: ${data.empresa.googleMapsLink}`);
-  lines.push('');
-
-  // 2
-  lines.push('🎨 *2. Identidade Visual*');
-  if (data.identidadeVisual.logoNome) lines.push(`• Logo: ${data.identidadeVisual.logoNome}`);
-  if (data.identidadeVisual.logoCloudUrl) {
-    lines.push(`• Link do Logo (Nuvem): ${data.identidadeVisual.logoCloudUrl}`);
-  } else if (data.identidadeVisual.logoUrl && !data.identidadeVisual.logoUrl.startsWith('data:')) {
-    lines.push(`• Link do Logo/Imagem: ${data.identidadeVisual.logoUrl}`);
-  } else if (data.identidadeVisual.logoUrl && data.identidadeVisual.logoUrl.startsWith('data:')) {
-    lines.push(`• Logo Anexada: Imagem selecionada (${data.identidadeVisual.logoNome || 'logo'})`);
+  // 03 Objetivo
+  lines.push('🎯 *03. OBJETIVO DA PÁGINA*');
+  if (data.objetivo?.principal) {
+    lines.push(`• Principal Objetivo: ${data.objetivo.principal}`);
   }
-  if (data.identidadeVisual.slogan) lines.push(`• Slogan: ${data.identidadeVisual.slogan}`);
-  if (data.identidadeVisual.coresPrincipais) lines.push(`• Cores Principais: ${data.identidadeVisual.coresPrincipais}`);
-  if (data.identidadeVisual.estiloSite.length > 0) lines.push(`• Estilo: ${data.identidadeVisual.estiloSite.join(', ')}`);
-  if (data.identidadeVisual.sitesReferencia) lines.push(`• Sites Referência: ${data.identidadeVisual.sitesReferencia}`);
+  if (data.objetivo?.outroDescricao) {
+    lines.push(`• Detalhes do Objetivo: ${data.objetivo.outroDescricao}`);
+  }
   lines.push('');
 
-  // 3
-  const hasGalleryImages = data.midia.uploadedImages && data.midia.uploadedImages.length > 0;
-  if (data.midia.linksImagens || data.midia.arquivosInfo || data.midia.observacoes || hasGalleryImages) {
-    lines.push('📷 *3. Fotos e Vídeos*');
-    if (hasGalleryImages) {
-      lines.push(`• Fotos Anexadas (${data.midia.uploadedImages.length} arquivos salvos na nuvem):`);
-      data.midia.uploadedImages.forEach((img, idx) => {
-        const kb = (img.size / 1024).toFixed(0);
-        const directUrl = img.fullUrl || (img.url ? (typeof window !== 'undefined' ? `${window.location.origin}${img.url}` : img.url) : null);
-        if (directUrl) {
-          lines.push(`  - [Foto ${idx + 1}] ${img.name} (${kb} KB): ${directUrl}`);
-        } else {
-          lines.push(`  - [Foto ${idx + 1}] ${img.name} (${kb} KB)`);
-        }
+  // 04 Sobre o Projeto
+  lines.push('📦 *04. SOBRE O PROJETO*');
+  if (data.projeto?.produtosServicos) {
+    lines.push(`• Produtos/Serviços na Página:\n  ${data.projeto.produtosServicos}`);
+  }
+  if (data.projeto?.infoIndispensaveis) {
+    lines.push(`• Informações Indispensáveis:\n  ${data.projeto.infoIndispensaveis}`);
+  }
+  if (data.projeto?.possuiTextos) {
+    lines.push(`• Possui Textos Prontos: ${data.projeto.possuiTextos}`);
+  }
+  if (data.projeto?.possuiIdentidadeVisual) {
+    lines.push(`• Identidade Visual: ${data.projeto.possuiIdentidadeVisual}`);
+  }
+  lines.push('');
+
+  // 05 Referências e Estilo
+  lines.push('✨ *05. REFERÊNCIAS E ESTILO*');
+  if (data.referenciasEstilo?.sitesGosta) {
+    lines.push(`• Páginas que Gosta: ${data.referenciasEstilo.sitesGosta}`);
+  }
+  if (data.referenciasEstilo?.estilos && data.referenciasEstilo.estilos.length > 0) {
+    lines.push(`• Estilos Escolhidos: ${data.referenciasEstilo.estilos.join(', ')}`);
+  }
+  if (data.referenciasEstilo?.naoGosta) {
+    lines.push(`• O que NÃO Gostaria: ${data.referenciasEstilo.naoGosta}`);
+  }
+  lines.push('');
+
+  // 06 Materiais
+  lines.push('📁 *06. MATERIAIS*');
+  if (data.materiais?.statusItens) {
+    const statusLabels: Record<string, string> = {
+      logo: 'Logotipo',
+      fotos: 'Fotos',
+      videos: 'Vídeos',
+      textos: 'Textos',
+      redesSociais: 'Redes Sociais',
+      identidadeVisual: 'Identidade Visual',
+      catalogo: 'Catálogo / Apresentação',
+    };
+    const statusEntries = Object.entries(data.materiais.statusItens).filter(([_, val]) => Boolean(val));
+    if (statusEntries.length > 0) {
+      lines.push('• Status dos Materiais:');
+      statusEntries.forEach(([key, val]) => {
+        lines.push(`  - ${statusLabels[key] || key}: ${val}`);
       });
     }
-    if (data.midia.linksImagens) lines.push(`• Links das Imagens: ${data.midia.linksImagens}`);
-    if (data.midia.arquivosInfo) lines.push(`• Pasta na Nuvem (Drive/Dropbox): ${data.midia.arquivosInfo}`);
-    if (data.midia.observacoes) lines.push(`• Observações: ${data.midia.observacoes}`);
-    lines.push('');
   }
 
-  // 4
-  lines.push('📱 *4. Redes Sociais e Contatos*');
-  if (data.contatos.whatsapp) lines.push(`• WhatsApp: ${data.contatos.whatsapp}`);
-  if (data.contatos.instagram) lines.push(`• Instagram: ${data.contatos.instagram}`);
-  if (data.contatos.facebook) lines.push(`• Facebook: ${data.contatos.facebook}`);
-  if (data.contatos.tiktok) lines.push(`• TikTok: ${data.contatos.tiktok}`);
-  if (data.contatos.email) lines.push(`• E-mail: ${data.contatos.email}`);
-  if (data.contatos.outros) lines.push(`• Outros Contatos: ${data.contatos.outros}`);
-  lines.push('');
-
-  // 5
-  if (data.sobre.historia || data.sobre.sobreNos) {
-    lines.push('ℹ️ *5. Sobre a Empresa*');
-    if (data.sobre.historia) lines.push(`• História: ${data.sobre.historia}`);
-    if (data.sobre.sobreNos) lines.push(`• Sobre Nós: ${data.sobre.sobreNos}`);
-    lines.push('');
+  if (data.materiais?.linkDrive) {
+    lines.push(`• Link Nuvem (Drive/OneDrive): ${data.materiais.linkDrive}`);
   }
 
-  // 6
-  const validProducts = data.produtosServicos.filter(p => p.nome.trim() !== '');
-  if (validProducts.length > 0) {
-    lines.push('🛍️ *6. Principais Produtos/Serviços*');
-    validProducts.forEach((prod, i) => {
-      lines.push(`• Item ${i + 1}: ${prod.nome}${prod.preco ? ` (R$ ${prod.preco})` : ''}`);
-      if (prod.descricao) lines.push(`  Desc: ${prod.descricao}`);
+  if (data.materiais?.arquivosUpload && data.materiais.arquivosUpload.length > 0) {
+    lines.push(`• Arquivos Anexados (${data.materiais.arquivosUpload.length} itens):`);
+    data.materiais.arquivosUpload.forEach((file, idx) => {
+      const kb = (file.size / 1024).toFixed(0);
+      const directUrl = file.fullUrl || (file.url ? (typeof window !== 'undefined' ? `${window.location.origin}${file.url}` : file.url) : null);
+      if (directUrl) {
+        lines.push(`  - [Item ${idx + 1}] ${file.name} (${kb} KB): ${directUrl}`);
+      } else {
+        lines.push(`  - [Item ${idx + 1}] ${file.name} (${kb} KB)`);
+      }
     });
-    lines.push('');
   }
 
-  // 7
-  if (data.planos.possuiPlanos || data.planos.detalhes) {
-    lines.push('💳 *7. Planos e Valores*');
-    lines.push(`• Possui Planos: ${data.planos.possuiPlanos || 'Não especificado'}`);
-    if (data.planos.detalhes) lines.push(`• Detalhes: ${data.planos.detalhes}`);
-    lines.push('');
+  if (data.materiais?.observacoes) {
+    lines.push(`• Obs sobre Materiais: ${data.materiais.observacoes}`);
   }
-
-  // 8
-  if (data.agendamento.possuiAgendamento || data.agendamento.canais.length > 0) {
-    lines.push('📅 *8. Agendamento*');
-    lines.push(`• Terá Agendamento: ${data.agendamento.possuiAgendamento || 'Não'}`);
-    if (data.agendamento.canais.length > 0) lines.push(`• Canais: ${data.agendamento.canais.join(', ')}`);
-    if (data.agendamento.maisInformacoes) lines.push(`• Info: ${data.agendamento.maisInformacoes}`);
-    lines.push('');
-  }
-
-  // 9
-  if (data.horarios.segundaSexta || data.horarios.sabados || data.horarios.domingosFeriados) {
-    lines.push('⏰ *9. Horário de Funcionamento*');
-    if (data.horarios.segundaSexta) lines.push(`• Seg a Sex: ${data.horarios.segundaSexta}`);
-    if (data.horarios.sabados) lines.push(`• Sábados: ${data.horarios.sabados}`);
-    if (data.horarios.domingosFeriados) lines.push(`• Dom/Feriados: ${data.horarios.domingosFeriados}`);
-    lines.push('');
-  }
-
-  // 10
-  if (data.localizacao.enderecoExibicao || data.localizacao.exibirMapa) {
-    lines.push('📍 *10. Localização no Site*');
-    if (data.localizacao.enderecoExibicao) lines.push(`• Endereço Exibição: ${data.localizacao.enderecoExibicao}`);
-    if (data.localizacao.pontoReferencia) lines.push(`• Ponto de Ref: ${data.localizacao.pontoReferencia}`);
-    if (data.localizacao.exibirMapa) lines.push(`• Exibir Mapa: ${data.localizacao.exibirMapa}`);
-    lines.push('');
-  }
-
-  // 11
-  if (data.diferenciais.itens) {
-    lines.push('⭐ *11. Diferenciais da Empresa*');
-    lines.push(`${data.diferenciais.itens}`);
-    lines.push('');
-  }
-
-  // 12
-  if (data.fraseEfeito.frasePrincipal) {
-    lines.push('💬 *12. Frase de Efeito (Topo)*');
-    lines.push(`"${data.fraseEfeito.frasePrincipal}"`);
-    lines.push('');
-  }
-
-  // 13
-  if (data.botoesAcoes.selecionados.length > 0) {
-    lines.push('🔘 *13. Botões e Ações de Destaque*');
-    lines.push(`• ${data.botoesAcoes.selecionados.join(', ')}`);
-    lines.push('');
-  }
-
-  // 14
-  lines.push('🌐 *14. Domínio*');
-  lines.push(`• Possui Domínio: ${data.dominio.possuiDominio || 'Não'}`);
-  if (data.dominio.nomeDominio) lines.push(`• Domínio: ${data.dominio.nomeDominio}`);
   lines.push('');
 
-  // 15
-  if (data.paginasSite.selecionadas.length > 0) {
-    lines.push('📑 *15. Páginas do Site*');
-    lines.push(`• ${data.paginasSite.selecionadas.join(', ')}`);
-    lines.push('');
+  // 07 Contato e Direcionamento
+  lines.push('📲 *07. CONTATO E DIRECIONAMENTO*');
+  if (data.contato?.canalPrincipal) {
+    lines.push(`• Canal Principal de Conversão: ${data.contato.canalPrincipal}`);
+    if (data.contato.canalPrincipalValor) {
+      lines.push(`• Dado do Canal Principal: ${data.contato.canalPrincipalValor}`);
+    }
   }
-
-  // 16
-  if (data.referencias.gosta || data.referencias.naoQuer) {
-    lines.push('💡 *16. Referências e Ideias*');
-    if (data.referencias.gosta) lines.push(`• O que gosta: ${data.referencias.gosta}`);
-    if (data.referencias.naoQuer) lines.push(`• O que NÃO quer: ${data.referencias.naoQuer}`);
-    lines.push('');
+  const outrosCanais: string[] = [];
+  if (data.contato?.whatsapp && data.contato.canalPrincipal !== 'WhatsApp') outrosCanais.push(`WhatsApp: ${data.contato.whatsapp}`);
+  if (data.contato?.instagram && data.contato.canalPrincipal !== 'Instagram') outrosCanais.push(`Instagram: ${data.contato.instagram}`);
+  if (data.contato?.telefone && data.contato.canalPrincipal !== 'Telefone') outrosCanais.push(`Telefone: ${data.contato.telefone}`);
+  if (data.contato?.email && data.contato.canalPrincipal !== 'E-mail') outrosCanais.push(`E-mail: ${data.contato.email}`);
+  if (data.contato?.outro && data.contato.canalPrincipal !== 'Outro') outrosCanais.push(`Outro: ${data.contato.outro}`);
+  if (outrosCanais.length > 0) {
+    lines.push(`• Canais Complementares: ${outrosCanais.join(' | ')}`);
   }
-
-  // 17
-  if (data.adicionais.outrasInfo) {
-    lines.push('📄 *17. Informações Adicionais*');
-    lines.push(`${data.adicionais.outrasInfo}`);
-    lines.push('');
-  }
-
-  // Checklist
-  lines.push('✅ *Checklist Final*');
-  lines.push(`• Dados confirmados: ${data.checklist.confirmou ? 'Sim' : 'Não'}`);
-  lines.push(`• Mídias/Logo: ${data.checklist.anexouArquivos ? 'Anexadas / Prontas para envio' : 'Enviar na conversa do WhatsApp'}`);
   lines.push('');
 
-  // Attached PDF link if generated
+  // 08 Informações Adicionais
+  if (data.informacoesAdicionais?.detalhesExtras) {
+    lines.push('📝 *08. INFORMAÇÕES ADICIONAIS*');
+    lines.push(data.informacoesAdicionais.detalhesExtras);
+    lines.push('');
+  }
+
+  // Link do PDF anexado
   if (pdfDirectUrl) {
-    lines.push('📄 *ARQUIVO PDF OFICIAL GERADO:*');
+    lines.push('📄 *DOCUMENTO OFICIAL DO BRIEFING (PDF):*');
     lines.push(`🔗 ${pdfDirectUrl}`);
     lines.push('');
   }
 
-  lines.push('━━━━━━━━━━━━━━━━━━━━');
-  lines.push('✨ _Enviado via Briefing Gomes Studio_');
+  lines.push('━━━━━━━━━━━━━━━━━━━━━━━━');
+  lines.push('🚀 _Desenvolvido por Gomes Studio_');
+  lines.push('🌐 https://lucasgomes3621-ui.github.io/Gomes-Studio-/');
 
   return lines.join('\n');
 }
@@ -348,27 +440,12 @@ export function getDirectWhatsAppUrl(
 }
 
 export function formatEmailBody(data: BriefingData): string {
-  const lines: string[] = [];
-
-  lines.push('Olá Gomes Studio!');
-  lines.push('');
-  lines.push('Estou enviando o Briefing e os arquivos de mídia para a criação do nosso site.');
-  lines.push('');
-  lines.push('📌 ANEXOS NESTE E-MAIL:');
-  lines.push('• Fotos, vídeos e arquivo da logo em alta resolução anexados.');
-  lines.push('');
-  lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  lines.push('RESUMO DAS INFORMAÇÕES PREENCHIDAS:');
-  lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  lines.push('');
-  lines.push(formatWhatsAppMessage(data));
-
-  return lines.join('\n');
+  return formatWhatsAppMessage(data);
 }
 
 export function getDirectEmailUrls(data: BriefingData, targetEmail: string = 'lucasgomes3621@gmail.com') {
-  const companyName = data.empresa.nome || 'Novo Cliente';
-  const subject = `Briefing & Mídias do Site: ${companyName}`;
+  const companyName = data.sobreNegocio?.nomeEmpresa || data.sobreVoce?.nome || 'Novo Cliente';
+  const subject = `Briefing de Presença Digital: ${companyName} - Gomes Studio`;
   const body = formatEmailBody(data);
 
   const mailtoUrl = `mailto:${targetEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -381,4 +458,3 @@ export function getDirectEmailUrls(data: BriefingData, targetEmail: string = 'lu
     body,
   };
 }
-
